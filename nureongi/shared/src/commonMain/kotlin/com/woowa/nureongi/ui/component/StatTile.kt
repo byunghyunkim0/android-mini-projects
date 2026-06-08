@@ -17,17 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
-import com.woowa.nureongi.ui.theme.NureongiTypography
+import com.woowa.nureongi.ui.theme.NureongiTypography.StatLabelStyle
+import com.woowa.nureongi.ui.theme.NureongiTypography.StatValueStyle
 
-/**
- * "20m" / "남은 거리"처럼, 핵심 수치 하나와 그 설명을 세로로 보여주는 타일.
- *
- * 값 계산이나 단위 포맷팅은 호출 측(화면/매퍼)에서 끝낸 문자열을 그대로
- * 표시만 한다. 값과 설명을 하나의 의미 단위로 묶어 스크린 리더에 전달한다.
- *
- * @param value 강조해서 보여줄 값 (예: "20m")
- * @param label 값을 설명하는 한 줄 문구 (예: "남은 거리")
- */
 @Composable
 fun StatTile(
     value: String,
@@ -38,7 +30,7 @@ fun StatTile(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .background(NureongiColors.Surface)
-            .padding(16.dp)
+            .padding(horizontal = 20.dp, vertical = 18.dp)
             .semantics(mergeDescendants = true) {
                 contentDescription = "$label $value"
             },
@@ -46,12 +38,12 @@ fun StatTile(
     ) {
         Text(
             text = value,
-            style = NureongiTypography.SectionHeader,
+            style = StatValueStyle,
             color = NureongiColors.Accent,
         )
         Text(
             text = label,
-            style = NureongiTypography.ItemDescription,
+            style = StatLabelStyle,
             color = NureongiColors.TextSecondary,
         )
     }

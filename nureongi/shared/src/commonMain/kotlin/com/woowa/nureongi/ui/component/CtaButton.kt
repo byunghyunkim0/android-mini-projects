@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -24,22 +23,6 @@ import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
 
-/**
- * 화면 하단에 고정되는 가로 전체 너비의 CTA 버튼.
- *
- * 활성화 여부와 누르는 동작을 파라미터로만 받고, "언제 활성화할지"는 호출 측(화면)에서
- * 결정한다. 비활성 상태에서는 클릭이 동작하지 않을 뿐 아니라, 스크린 리더에도
- * 비활성 상태로 안내된다.
- *
- * @param text 버튼에 표시할 문구
- * @param onClick 버튼을 눌렀을 때 호출되는 콜백 (활성 상태에서만 호출됨)
- * @param enabled 버튼 활성화 여부. 비활성 시 클릭이 동작하지 않고 스크린 리더에도
- * 비활성 상태로 안내된다. 색상은 자동으로 바뀌지 않으므로, 호출 측에서 활성/비활성
- * 상태에 맞는 [containerColor]/[contentColor] 를 직접 전달해야 한다
- * (예: 비활성 시 [NureongiColors.Disabled]/[NureongiColors.OnDisabled]).
- * @param containerColor 배경색
- * @param contentColor 글자색
- */
 @Composable
 fun CtaButton(
     text: String,
@@ -52,7 +35,6 @@ fun CtaButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(containerColor)
             .clickable(

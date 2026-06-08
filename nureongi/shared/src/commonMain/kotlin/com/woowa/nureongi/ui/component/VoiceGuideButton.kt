@@ -20,14 +20,6 @@ import nureongi.shared.generated.resources.Res
 import nureongi.shared.generated.resources.ic_volume
 import org.jetbrains.compose.resources.painterResource
 
-/**
- * 음성 안내를 다시 들려주는 원형 아이콘 버튼.
- *
- * 음성 재생 로직은 갖지 않고, 눌렀을 때 호출할 콜백만 받는다. 아이콘 모양과 무관하게
- * 항상 "음성 안내 다시 듣기"라는 동일한 의미를 스크린 리더에 전달한다.
- *
- * @param onClick 버튼을 눌렀을 때 호출되는 콜백
- */
 @Composable
 fun VoiceGuideButton(
     onClick: () -> Unit,
@@ -35,7 +27,6 @@ fun VoiceGuideButton(
 ) {
     Box(
         modifier = modifier
-            .size(56.dp)
             .clip(CircleShape)
             .background(NureongiColors.Accent)
             .clickable(

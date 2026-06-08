@@ -1,48 +1,31 @@
 package com.woowa.nureongi.ui.model
 
 data class GuidanceUiState(
-    val destination: DestinationSummaryUiModel,
-    val steps: List<GuidanceStepUiModel> = emptyList(),
-    val currentStepIndex: Int = 0,
-    val miniMap: MiniMapUiModel? = null,
-    val isArrived: Boolean = false,
-    val isLoading: Boolean = false,
-    val error: UiError? = null,
-) {
-    val totalStepCount: Int
-        get() = steps.size
-
-    val currentStep: GuidanceStepUiModel?
-        get() = steps.getOrNull(currentStepIndex)
-
-    val displayStepNumber: Int
-        get() = if (currentStep == null) 0 else currentStepIndex + 1
-
-    val isLastStep: Boolean
-        get() = steps.isNotEmpty() && currentStepIndex == steps.lastIndex
-}
-
-data class DestinationSummaryUiModel(
-    val id: String,
-    val name: String,
+    val destinationName: String,
+    val currentStep: Int,
+    val totalSteps: Int,
+    val currentGuidance: GuidanceStepUiModel,
+    val remainingDistanceText: String,
+    val remainingTactileBlockText: String,
+    val nextButtonText: String,
 )
 
 data class GuidanceStepUiModel(
-    val id: String,
-    val actionType: GuidanceActionType,
-    val instructionText: String,
-    val landmarkText: String,
+    val instruction: String,
+    val landmark: String,
     val guideMessage: String,
-    val remainingDistanceText: String,
-    val remainingBlockCountText: String,
 )
 
-enum class GuidanceActionType {
-    START,
-    GO_STRAIGHT,
-    TURN_LEFT,
-    TURN_RIGHT,
-    GO_UP,
-    GO_DOWN,
-    ARRIVE,
-}
+internal val PreviewGuidanceUiState = GuidanceUiState(
+    destinationName = "2번 출구",
+    currentStep = 1,
+    totalSteps = 3,
+    currentGuidance = GuidanceStepUiModel(
+        instruction = "8m 직진",
+        landmark = "다음 점형 블록 · 출구 갈림길",
+        guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. 8미터 앞에 갈림길이 있습니다.",
+    ),
+    remainingDistanceText = "20m",
+    remainingTactileBlockText = "2개",
+    nextButtonText = "다음 점형 블록 도착 ›",
+)

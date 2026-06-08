@@ -21,16 +21,6 @@ import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
 
-/**
- * 현재 위치를 보여주고, 변경할 수 있는 진입점을 제공하는 전체 너비 정보 바.
- *
- * 위치를 어떻게 가져오고 변경할지에 대한 로직은 갖지 않으며, 표시할 위치 이름과
- * 변경 동작 콜백만 받는다. 변경 영역 전체가 하나의 의미 단위로 읽히도록
- * `mergeDescendants` 효과를 갖는 `clickable + semantics` 로 구성한다.
- *
- * @param locationName 현재 위치 이름 (예: "개찰구")
- * @param onChangeClick "변경" 영역을 눌렀을 때 호출되는 콜백
- */
 @Composable
 fun CurrentLocationBar(
     locationName: String,
