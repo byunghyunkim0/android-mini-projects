@@ -13,25 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
-
-private val StatValueStyle = TextStyle(
-    fontSize = 32.sp,
-    lineHeight = 36.sp,
-    fontWeight = FontWeight.ExtraBold,
-)
-
-private val StatLabelStyle = TextStyle(
-    fontSize = 16.sp,
-    lineHeight = 20.sp,
-    fontWeight = FontWeight.Bold,
-)
+import com.woowa.nureongi.ui.theme.NureongiTypography.StatLabelStyle
+import com.woowa.nureongi.ui.theme.NureongiTypography.StatValueStyle
 
 @Composable
 fun StatTile(

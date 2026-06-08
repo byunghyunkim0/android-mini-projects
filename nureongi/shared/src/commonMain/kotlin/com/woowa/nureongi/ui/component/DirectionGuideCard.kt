@@ -20,26 +20,14 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
+import com.woowa.nureongi.ui.theme.NureongiTypography.GuidanceInstructionStyle
+import com.woowa.nureongi.ui.theme.NureongiTypography.GuidanceMessageStyle
 
-private val GuidanceInstructionStyle = TextStyle(
-    fontSize = 36.sp,
-    lineHeight = 40.sp,
-    fontWeight = FontWeight.ExtraBold,
-)
-
-private val GuidanceMessageStyle = TextStyle(
-    fontSize = 24.sp,
-    lineHeight = 34.sp,
-    fontWeight = FontWeight.Bold,
-)
 
 @Composable
 fun DirectionGuideCard(

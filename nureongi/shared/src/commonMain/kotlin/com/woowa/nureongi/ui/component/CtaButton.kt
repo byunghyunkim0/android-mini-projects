@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -18,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
@@ -33,7 +31,6 @@ fun CtaButton(
     enabled: Boolean = true,
     containerColor: Color,
     contentColor: Color,
-    textStyle: TextStyle = NureongiTypography.ItemTitle,
 ) {
     Box(
         modifier = modifier
@@ -51,7 +48,7 @@ fun CtaButton(
     ) {
         Text(
             text = text,
-            style = textStyle,
+            style = NureongiTypography.ItemTitle,
             color = contentColor,
         )
     }

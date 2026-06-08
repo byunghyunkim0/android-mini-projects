@@ -170,11 +170,6 @@ fun NextStepButton(
         onClick = onClick,
         containerColor = NureongiColors.Accent,
         contentColor = NureongiColors.OnAccent,
-        textStyle = TextStyle(
-            fontSize = 24.sp,
-            lineHeight = 28.sp,
-            fontWeight = FontWeight.ExtraBold,
-        ),
         modifier = modifier
             .height(72.dp)
             .semantics {
