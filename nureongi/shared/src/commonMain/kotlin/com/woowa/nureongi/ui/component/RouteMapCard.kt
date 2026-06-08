@@ -41,21 +41,6 @@ private const val HIGHLIGHTED_NODE_HOLE_RADIUS_RATIO = 0.5f
 private const val ROUTE_LINE_STROKE_WIDTH = 6f
 private const val LABEL_OFFSET = 6f
 
-/**
- * 점형 블럭 경로를 점-선 다이어그램으로 보여주는 지도 카드.
- *
- * `rows` x `columns` 크기의 배경 격자(점선)를 깔고, 그 위에 [path] 로 전달된
- * 노드들을 순서대로 선으로 이어 실제 경로를 강조해 그린다. 좌표 계산·경로 탐색
- * 로직은 갖지 않으며, 이미 계산된 노드 좌표·상태만 표시한다.
- *
- * 시각 정보는 보조 수단이므로, 동일한 내용을 [contentDescription] 으로도 제공해
- * 스크린 리더 사용자가 경로 요약을 들을 수 있게 한다.
- *
- * @param title 지도 제목 (예: "한빛역 · 점자 블럭 지도")
- * @param rows 배경 격자의 행 수
- * @param columns 배경 격자의 열 수
- * @param path 강조해서 그릴 경로 노드 목록 (순서대로 선으로 연결됨)
- */
 @Composable
 fun RouteMapCard(
     title: String,
@@ -108,11 +93,9 @@ fun RouteMapCard(
     }
 }
 
-/** 격자 상의 (row, column) 위치를 캔버스 좌표로 변환한다. */
 private fun cellOffset(row: Int, column: Int, cellWidth: Float, cellHeight: Float): Offset =
     Offset(x = column * cellWidth, y = row * cellHeight)
 
-/** 항상 표시되는 배경 격자(점선 + 회색 점)를 그린다. */
 private fun DrawScope.drawBackgroundGrid(rows: Int, columns: Int, cellWidth: Float, cellHeight: Float) {
     val lineColor = NureongiColors.TextSecondary.copy(alpha = GRID_LINE_ALPHA)
     val dashedStroke = Stroke(
@@ -149,7 +132,6 @@ private fun DrawScope.drawBackgroundGrid(rows: Int, columns: Int, cellWidth: Flo
     }
 }
 
-/** [path] 를 따라 강조 경로 선·노드·라벨을 그린다. */
 private fun DrawScope.drawHighlightedRoute(
     path: List<RouteNodeUiModel>,
     cellWidth: Float,

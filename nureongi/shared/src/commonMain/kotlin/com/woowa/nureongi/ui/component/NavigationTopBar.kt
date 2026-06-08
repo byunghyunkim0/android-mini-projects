@@ -20,17 +20,6 @@ import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
 
-/**
- * 길안내 진행 화면 상단의 닫기 버튼 + 목적지 정보 + 진행 단계 바.
- *
- * 안내 종료(닫기) 동작만 콜백으로 받고, 단계 계산이나 화면 전환은 호출 측 책임으로 둔다.
- *
- * @param destinationName 목적지 이름 (예: "2번 출구")
- * @param currentStep 현재 단계 (1부터 시작). 진행 표시줄에는 이 값이 곧
- *   완료된 단계 수(`completedSteps`)로 전달되어, 진행 중인 현재 단계까지 채워진다.
- * @param totalSteps 전체 단계 수
- * @param onCloseClick 닫기 버튼을 눌렀을 때 호출되는 콜백
- */
 @Composable
 fun NavigationTopBar(
     destinationName: String,
@@ -79,19 +68,12 @@ fun NavigationTopBar(
         }
         SegmentedProgressIndicator(
             totalSteps = totalSteps,
-            // 진행 중인 현재 단계까지 채워진 것으로 표시한다 (currentStep == completedSteps).
             completedSteps = currentStep,
             modifier = Modifier.padding(top = 8.dp),
         )
     }
 }
 
-/**
- * 뒤로가기 + 화면 제목으로 구성된 단순 상단바 (예: "현재 위치" 선택 화면).
- *
- * @param title 화면 제목
- * @param onBackClick 뒤로가기를 눌렀을 때 호출되는 콜백
- */
 @Composable
 fun BackNavigationTopBar(
     title: String,

@@ -20,16 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 
-/**
- * 안내 진행 단계를 가로로 분할된 막대로 보여주는 진행 표시줄.
- *
- * 전체 단계 수와 완료된 단계 수만 받아 그리며, 진행률 계산이나 단계 전환 로직은
- * 갖지 않는다. 시각 정보와 동일한 내용을 `progressBarRangeInfo` 시맨틱으로도 제공해
- * 스크린 리더가 "3단계 중 1단계"처럼 안내할 수 있게 한다.
- *
- * @param totalSteps 전체 단계 수
- * @param completedSteps 완료된 단계 수 (0..totalSteps)
- */
 @Composable
 fun SegmentedProgressIndicator(
     totalSteps: Int,
