@@ -1,0 +1,98 @@
+package com.woowa.nureongi.ui.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.woowa.nureongi.ui.theme.NureongiColors
+import com.woowa.nureongi.ui.theme.NureongiTheme
+import com.woowa.nureongi.ui.theme.NureongiTypography
+
+/**
+ * 현재 위치를 보여주고, 변경할 수 있는 진입점을 제공하는 전체 너비 정보 바.
+ *
+ * 위치를 어떻게 가져오고 변경할지에 대한 로직은 갖지 않으며, 표시할 위치 이름과
+ * 변경 동작 콜백만 받는다. 변경 영역 전체가 하나의 의미 단위로 읽히도록
+ * `mergeDescendants` 효과를 갖는 `clickable + semantics` 로 구성한다.
+ *
+ * @param locationName 현재 위치 이름 (예: "개찰구")
+ * @param onChangeClick "변경" 영역을 눌렀을 때 호출되는 콜백
+ */
+@Composable
+fun CurrentLocationBar(
+    locationName: String,
+    onChangeClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(NureongiColors.Surface)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "현재 위치",
+                style = NureongiTypography.ItemDescription,
+                color = NureongiColors.OnAccent,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(NureongiColors.Accent)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
+            Text(
+                text = locationName,
+                style = NureongiTypography.ItemTitle,
+                color = NureongiColors.TextPrimary,
+            )
+        }
+        Text(
+            text = "변경 ›",
+            style = NureongiTypography.ItemDescription,
+            color = NureongiColors.Accent,
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .clickable(
+                    onClickLabel = "현재 위치 변경",
+                    role = Role.Button,
+                    onClick = onChangeClick,
+                )
+                .semantics { contentDescription = "현재 위치 변경" }
+                .padding(start = 8.dp, top = 4.dp, bottom = 4.dp, end = 4.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun CurrentLocationBarPreview() {
+    NureongiTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(NureongiColors.Background)
+                .padding(20.dp),
+        ) {
+            CurrentLocationBar(locationName = "개찰구", onChangeClick = {})
+        }
+    }
+}
