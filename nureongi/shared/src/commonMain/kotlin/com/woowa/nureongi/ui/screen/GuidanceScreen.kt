@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -167,15 +168,16 @@ fun NextStepButton(
         onClick = onClick,
         containerColor = NureongiColors.Accent,
         contentColor = NureongiColors.OnAccent,
-        height = 72.dp,
         textStyle = TextStyle(
             fontSize = 24.sp,
             lineHeight = 28.sp,
             fontWeight = FontWeight.ExtraBold,
         ),
-        modifier = modifier.semantics {
-            contentDescription = "$text 버튼"
-        },
+        modifier = modifier
+            .height(72.dp)
+            .semantics {
+                contentDescription = "$text 버튼"
+            },
     )
 }
 
@@ -192,10 +194,11 @@ fun GuidanceBottomActions(
     ) {
         VoiceGuideButton(
             onClick = onVoiceGuideClick,
-            size = 72.dp,
-            modifier = Modifier.semantics {
-                contentDescription = "현재 안내 음성으로 다시 듣기 버튼"
-            },
+            modifier = Modifier
+                .size(72.dp)
+                .semantics {
+                    contentDescription = "현재 안내 음성으로 다시 듣기 버튼"
+                },
         )
         NextStepButton(
             text = nextButtonText,

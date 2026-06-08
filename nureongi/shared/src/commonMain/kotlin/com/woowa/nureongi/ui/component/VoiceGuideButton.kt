@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
@@ -32,12 +31,10 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun VoiceGuideButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    size: Dp = 56.dp,
+    modifier: Modifier = Modifier.size(56.dp),
 ) {
     Box(
         modifier = modifier
-            .size(size)
             .clip(CircleShape)
             .background(NureongiColors.Accent)
             .clickable(

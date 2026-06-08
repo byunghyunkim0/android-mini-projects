@@ -13,7 +13,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
@@ -38,16 +37,14 @@ private const val DOT_RADIUS_RATIO = 0.22f
  */
 @Composable
 fun BrailleIcon(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(40.dp),
     dotColor: Color = NureongiColors.Accent,
     backgroundColor: Color = NureongiColors.Surface,
-    size: Dp = 40.dp,
     rows: Int = 3,
     columns: Int = 3,
 ) {
     Canvas(
         modifier = modifier
-            .size(size)
             .clearAndSetSemantics {}
             .background(color = backgroundColor, shape = RoundedCornerShape(12.dp)),
     ) {

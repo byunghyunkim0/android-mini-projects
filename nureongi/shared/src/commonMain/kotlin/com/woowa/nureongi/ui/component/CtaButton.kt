@@ -20,7 +20,6 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
@@ -46,17 +45,15 @@ import com.woowa.nureongi.ui.theme.NureongiTypography
 fun CtaButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.height(56.dp),
     enabled: Boolean = true,
     containerColor: Color,
     contentColor: Color,
-    height: Dp = 56.dp,
     textStyle: TextStyle = NureongiTypography.ItemTitle,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(height)
             .clip(RoundedCornerShape(16.dp))
             .background(containerColor)
             .clickable(
