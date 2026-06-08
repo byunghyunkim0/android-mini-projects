@@ -2,5 +2,4 @@
 
 data class UiError(
     val message: String,
-    val actionLabel: String? = null,
 )

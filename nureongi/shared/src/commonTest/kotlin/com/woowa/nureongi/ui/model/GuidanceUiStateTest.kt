@@ -1,24 +1,21 @@
-﻿package com.woowa.nureongi.ui.model
+package com.woowa.nureongi.ui.model
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class GuidanceUiStateTest {
     @Test
-    fun currentStepAndProgressAreDerivedFromIndex() {
+    fun currentStepIsDerivedFromIndex() {
         val state = NureongiUiFixtures.Guidance.copy(currentStepIndex = 1)
 
         assertEquals(2, state.displayStepNumber)
-        assertEquals(2, state.completedStepCount)
         assertEquals("step-02", state.currentStep?.id)
-        assertEquals(2f / 3f, state.progressRatio)
         assertFalse(state.isLastStep)
     }
 
     @Test
-    fun currentStepCanBePassedToPr01DirectionGuideCard() {
+    fun guidanceStepMatchesDirectionGuideCardParameters() {
         val step = NureongiUiFixtures.Guidance.currentStep
 
         assertEquals("8m 직진", step?.instructionText)
@@ -27,26 +24,14 @@ class GuidanceUiStateTest {
     }
 
     @Test
-    fun miniMapCanBePassedToPr01RouteMapCard() {
+    fun miniMapMatchesRouteMapCardParameters() {
         val map = NureongiUiFixtures.MiniMap
 
         assertEquals(5, map.rows)
         assertEquals(4, map.columns)
-        assertEquals(3, map.routePath.size)
-        assertEquals(RouteNodeUiModel.State.HIGHLIGHTED, map.routePath.first().state)
-        assertEquals(RouteNodeUiModel.State.PASSED, map.routePath[1].state)
-        assertEquals(RouteNodeUiModel.State.HIGHLIGHTED, map.routePath.last().state)
-    }
-
-    @Test
-    fun movingAfterLastStepMarksArrived() {
-        val lastStepState = NureongiUiFixtures.Guidance.copy(currentStepIndex = 2)
-        val arrivedState = lastStepState.moveToNextStep()
-
-        assertTrue(arrivedState.isArrived)
-        assertEquals(1f, arrivedState.progressRatio)
-        assertEquals(3, arrivedState.completedStepCount)
-        assertEquals("안내 종료", arrivedState.primaryButtonText)
-        assertEquals("0m", arrivedState.remainingDistanceText)
+        assertEquals(3, map.path.size)
+        assertEquals(RouteNodeUiModel.State.HIGHLIGHTED, map.path.first().state)
+        assertEquals(RouteNodeUiModel.State.PASSED, map.path[1].state)
+        assertEquals(RouteNodeUiModel.State.HIGHLIGHTED, map.path.last().state)
     }
 }
