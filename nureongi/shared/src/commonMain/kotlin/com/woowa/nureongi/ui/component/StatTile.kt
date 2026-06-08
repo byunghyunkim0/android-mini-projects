@@ -13,11 +13,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
+
+private val StatValueStyle = TextStyle(
+    fontSize = 32.sp,
+    lineHeight = 36.sp,
+    fontWeight = FontWeight.ExtraBold,
+)
+
+private val StatLabelStyle = TextStyle(
+    fontSize = 16.sp,
+    lineHeight = 20.sp,
+    fontWeight = FontWeight.Bold,
+)
 
 /**
  * "20m" / "남은 거리"처럼, 핵심 수치 하나와 그 설명을 세로로 보여주는 타일.
@@ -38,7 +53,7 @@ fun StatTile(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .background(NureongiColors.Surface)
-            .padding(16.dp)
+            .padding(horizontal = 20.dp, vertical = 18.dp)
             .semantics(mergeDescendants = true) {
                 contentDescription = "$label $value"
             },
@@ -46,12 +61,12 @@ fun StatTile(
     ) {
         Text(
             text = value,
-            style = NureongiTypography.SectionHeader,
+            style = StatValueStyle,
             color = NureongiColors.Accent,
         )
         Text(
             text = label,
-            style = NureongiTypography.ItemDescription,
+            style = StatLabelStyle,
             color = NureongiColors.TextSecondary,
         )
     }

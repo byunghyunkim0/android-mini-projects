@@ -1,5 +1,6 @@
 package com.woowa.nureongi.ui.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,30 +15,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
 
-/**
- * 길안내 중 현재 해야 할 행동을 보여주는 안내 카드.
- *
- * 방향 아이콘은 호출 측에서 `leadingIcon` 슬롯으로 그려 넣도록 위임한다(예: 화살표,
- * 점자 패턴 아이콘 등). 이렇게 하면 이 컴포넌트는 "안내 문구를 어떻게 배치할지"에만
- * 집중하고, 실제로 어떤 아이콘을 쓸지는 화면이 결정한다.
- *
- * 제목과 본문을 합쳐 하나의 의미 단위로 전달해, 스크린 리더가 안내를 끊김 없이
- * 읽도록 한다.
- *
- * @param instruction 굵게 강조되는 핵심 안내 문구 (예: "8m 직진")
- * @param landmark 핵심 안내 문구를 보충하는 한 줄 설명 (예: "다음 점형 블럭 · 출구 갈림길")
- * @param guideMessage 상세 안내 문장
- * @param leadingIcon 카드 좌측에 그려질 아이콘 슬롯
- */
+private val GuidanceInstructionStyle = TextStyle(
+    fontSize = 36.sp,
+    lineHeight = 40.sp,
+    fontWeight = FontWeight.ExtraBold,
+)
+
+private val GuidanceMessageStyle = TextStyle(
+    fontSize = 24.sp,
+    lineHeight = 34.sp,
+    fontWeight = FontWeight.Bold,
+)
+
 @Composable
 fun DirectionGuideCard(
     instruction: String,
@@ -51,11 +54,11 @@ fun DirectionGuideCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .background(NureongiColors.Surface)
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(28.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.semantics(mergeDescendants = true) {
                 contentDescription = "$instruction. $landmark"
@@ -64,30 +67,66 @@ fun DirectionGuideCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(88.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(NureongiColors.Accent),
+                    .background(NureongiColors.Background),
                 contentAlignment = Alignment.Center,
             ) {
                 leadingIcon()
             }
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = instruction,
-                    style = NureongiTypography.SectionHeader,
-                    color = NureongiColors.TextPrimary,
+                    style = GuidanceInstructionStyle,
+                    color = NureongiColors.Accent,
                 )
                 Text(
                     text = landmark,
-                    style = NureongiTypography.ItemDescription,
+                    style = NureongiTypography.ItemTitle,
                     color = NureongiColors.TextSecondary,
                 )
             }
         }
         Text(
             text = guideMessage,
-            style = NureongiTypography.ItemTitle,
+            style = GuidanceMessageStyle,
             color = NureongiColors.TextPrimary,
+        )
+    }
+}
+
+@Composable
+fun StraightArrowIcon(
+    modifier: Modifier = Modifier,
+) {
+    Canvas(modifier = modifier.size(64.dp)) {
+        val strokeWidth = size.minDimension * 0.14f
+        val centerX = size.width / 2f
+        val topY = size.height * 0.12f
+        val bottomY = size.height * 0.86f
+        val arrowSideY = size.height * 0.34f
+        val arrowSideX = size.width * 0.22f
+
+        drawLine(
+            color = NureongiColors.Accent,
+            start = Offset(centerX, bottomY),
+            end = Offset(centerX, topY),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round,
+        )
+        drawLine(
+            color = NureongiColors.Accent,
+            start = Offset(centerX, topY),
+            end = Offset(arrowSideX, arrowSideY),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round,
+        )
+        drawLine(
+            color = NureongiColors.Accent,
+            start = Offset(centerX, topY),
+            end = Offset(size.width - arrowSideX, arrowSideY),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round,
         )
     }
 }
@@ -104,11 +143,10 @@ private fun DirectionGuideCardPreview() {
         ) {
             DirectionGuideCard(
                 instruction = "8m 직진",
-                landmark = "다음 점형 블럭 · 출구 갈림길",
-                guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. " +
-                    "8미터 앞에 갈림길이 있습니다.",
+                landmark = "다음 점형 블록 · 출구 갈림길",
+                guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. 8미터 앞에 갈림길이 있습니다.",
                 leadingIcon = {
-                    BrailleIcon(dotColor = NureongiColors.OnAccent, backgroundColor = NureongiColors.Accent)
+                    StraightArrowIcon()
                 },
             )
         }
