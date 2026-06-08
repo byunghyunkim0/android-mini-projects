@@ -97,7 +97,7 @@ fun DirectionGuideCard(
 
 @Composable
 fun StraightArrowIcon(
-    modifier: Modifier = Modifier.size(64.dp),
+    modifier: Modifier = Modifier,
 ) {
     Canvas(modifier = modifier) {
         val strokeWidth = size.minDimension * 0.14f

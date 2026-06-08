@@ -37,7 +37,7 @@ private const val DOT_RADIUS_RATIO = 0.22f
  */
 @Composable
 fun BrailleIcon(
-    modifier: Modifier = Modifier.size(40.dp),
+    modifier: Modifier = Modifier,
     dotColor: Color = NureongiColors.Accent,
     backgroundColor: Color = NureongiColors.Surface,
     rows: Int = 3,

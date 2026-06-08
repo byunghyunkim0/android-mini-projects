@@ -31,7 +31,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun VoiceGuideButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier.size(56.dp),
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier

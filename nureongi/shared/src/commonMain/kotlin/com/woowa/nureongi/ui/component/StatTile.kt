@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
-import com.woowa.nureongi.ui.theme.NureongiTypography
 
 private val StatValueStyle = TextStyle(
     fontSize = 32.sp,

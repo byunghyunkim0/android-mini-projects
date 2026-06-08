@@ -129,7 +129,9 @@ fun CurrentGuidanceCard(
             liveRegion = LiveRegionMode.Polite
         },
         leadingIcon = {
-            StraightArrowIcon()
+            StraightArrowIcon(
+                modifier = Modifier.size(64.dp)
+            )
         },
     )
 }

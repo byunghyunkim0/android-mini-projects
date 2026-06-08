@@ -45,7 +45,7 @@ import com.woowa.nureongi.ui.theme.NureongiTypography
 fun CtaButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier.height(56.dp),
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color,
     contentColor: Color,
