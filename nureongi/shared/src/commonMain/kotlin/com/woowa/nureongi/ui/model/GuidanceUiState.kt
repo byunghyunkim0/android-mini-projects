@@ -77,9 +77,6 @@ internal val PreviewGuidanceUiState = GuidanceUiState(
         remainingTactileBlockText = "0개",
         actionButtonText = "안내 종료",
     ),
-    remainingDistanceText = "20m",
-    remainingTactileBlockText = "2개",
-    nextButtonText = "다음 점형 블록 도착 ›",
     miniMap = MiniMapUiModel(
         title = "한빛역 · 점자 블럭 지도",
         rows = 5,
