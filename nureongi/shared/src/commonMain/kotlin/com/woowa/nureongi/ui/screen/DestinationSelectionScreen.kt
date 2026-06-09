@@ -106,7 +106,7 @@ private fun DestinationSelectionContent(
                 locationName = currentLocationName,
                 onChangeClick = onChangeLocationClick,
             )
-            DestinationList(
+            DestinationOptions(
                 modifier = Modifier.weight(1f),
                 destinations = destinations,
                 selectedDestinationId = selectedDestinationId,
@@ -156,7 +156,7 @@ private fun DestinationSelectionHeader(
 }
 
 @Composable
-private fun DestinationList(
+private fun DestinationOptions(
     destinations: List<DestinationItemUiModel>,
     selectedDestinationId: String?,
     onDestinationSelected: (String) -> Unit,
