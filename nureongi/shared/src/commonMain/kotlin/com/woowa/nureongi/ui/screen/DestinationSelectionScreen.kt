@@ -68,42 +68,80 @@ private fun DestinationSelectionContent(
 ) {
     val selectedDestination = selectedIndex?.let { destinations.getOrNull(it) }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(NureongiColors.Background)
             .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            BrailleIcon(
-                dotColor = NureongiColors.Accent,
-                backgroundColor = NureongiColors.Background,
-                modifier = Modifier.size(65.dp)
+            DestinationSelectionHeader()
+            CurrentLocationBar(
+                locationName = currentLocationName,
+                onChangeClick = onChangeLocationClick,
             )
-            Column {
-                Text(
-                    text = "누렁이",
-                    style = NureongiTypography.SectionHeader,
-                    color = NureongiColors.TextPrimary,
-                    modifier = Modifier.semantics { heading() },
-                )
-                Text(
-                    text = "점자 블록 길안내",
-                    style = NureongiTypography.ItemDescription,
-                    color = NureongiColors.Accent,
-                )
-            }
+            DestinationSelectionDestinationList(
+                modifier = Modifier.weight(1f),
+                destinations = destinations,
+                selectedIndex = selectedIndex,
+                onSelectDestination = onSelectDestination,
+            )
         }
 
-        CurrentLocationBar(
-            locationName = currentLocationName,
-            onChangeClick = onChangeLocationClick,
+        DestinationSelectionCtaButton(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .height(72.dp),
+            selectedDestination = selectedDestination,
+            onStartNavigation = onStartNavigation,
         )
+    }
+}
 
+@Composable
+private fun DestinationSelectionHeader(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BrailleIcon(
+            dotColor = NureongiColors.Accent,
+            backgroundColor = NureongiColors.Background,
+            modifier = Modifier.size(65.dp)
+        )
+        Column {
+            Text(
+                text = "누렁이",
+                style = NureongiTypography.SectionHeader,
+                color = NureongiColors.TextPrimary,
+                modifier = Modifier.semantics { heading() },
+            )
+            Text(
+                text = "점자 블록 길안내",
+                style = NureongiTypography.ItemDescription,
+                color = NureongiColors.Accent,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DestinationSelectionDestinationList(
+    modifier: Modifier = Modifier,
+    destinations: List<PlaceUiModel>,
+    selectedIndex: Int?,
+    onSelectDestination: (Int) -> Unit,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 text = "어디로 갈까요?",
@@ -118,37 +156,27 @@ private fun DestinationSelectionContent(
             )
         }
 
-        Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 88.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                itemsIndexed(destinations) { index, destination ->
-                    PlaceListItem(
-                        place = destination,
-                        selected = index == selectedIndex,
-                        onClick = { onSelectDestination(index) },
-                    )
-                }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 88.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            itemsIndexed(destinations) { index, destination ->
+                PlaceListItem(
+                    place = destination,
+                    selected = index == selectedIndex,
+                    onClick = { onSelectDestination(index) },
+                )
             }
-
-            DestinationSelectionCtaButton(
-                selectedDestination = selectedDestination,
-                onStartNavigation = onStartNavigation,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .height(72.dp),
-            )
         }
     }
 }
 
 @Composable
 private fun DestinationSelectionCtaButton(
+    modifier: Modifier = Modifier,
     selectedDestination: PlaceUiModel?,
     onStartNavigation: (PlaceUiModel) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     if (selectedDestination != null) {
         CtaButton(
