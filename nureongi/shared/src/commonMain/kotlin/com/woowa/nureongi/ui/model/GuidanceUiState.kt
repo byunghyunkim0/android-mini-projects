@@ -30,6 +30,27 @@ data class GuidanceUiState(
 
     val nextButtonText: String
         get() = currentGuidance.actionButtonText
+
+    /**
+     * currentStepIndex를 기준으로 miniMap의 path 노드 상태를 자동으로 계산해서 반환한다.
+     * - 현재 위치 노드(currentStepIndex): HIGHLIGHTED (반짝임 애니메이션)
+     * - 지나온 노드(index < currentStepIndex): PASSED (어둡게)
+     * - 아직 가지 않은 노드(index > currentStepIndex): NEUTRAL (기본)
+     * 단, 도착 상태이면 마지막 노드를 HIGHLIGHTED로 표시한다.
+     */
+    val currentMiniMap: MiniMapUiModel
+        get() {
+            val highlightedIndex = if (isArrived) miniMap.path.lastIndex else currentStepIndex
+            val updatedPath = miniMap.path.mapIndexed { index, node ->
+                val state = when {
+                    index == highlightedIndex -> RouteNodeUiModel.State.HIGHLIGHTED
+                    index < highlightedIndex -> RouteNodeUiModel.State.PASSED
+                    else -> RouteNodeUiModel.State.NEUTRAL
+                }
+                node.copy(state = state)
+            }
+            return miniMap.copy(path = updatedPath)
+        }
 }
 
 data class GuidanceStepUiModel(

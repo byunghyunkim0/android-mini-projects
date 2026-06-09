@@ -96,7 +96,7 @@ fun GuidanceScreen(
                     remainingDistanceText = state.remainingDistanceText,
                     remainingTactileBlockText = state.remainingTactileBlockText,
                 )
-                TactileMiniMap(uiModel = state.miniMap)
+                TactileMiniMap(uiModel = state.currentMiniMap)
             }
             GuidanceBottomActions(
                 nextButtonText = state.nextButtonText,
