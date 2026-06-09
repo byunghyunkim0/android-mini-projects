@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.DirectionGuideCard
 import com.woowa.nureongi.ui.component.NavigationTopBar
@@ -29,11 +30,31 @@ import com.woowa.nureongi.ui.component.StatTile
 import com.woowa.nureongi.ui.component.StraightArrowIcon
 import com.woowa.nureongi.ui.component.TactileMiniMap
 import com.woowa.nureongi.ui.component.VoiceGuideButton
+import com.woowa.nureongi.ui.guidance.GuidanceViewModel
 import com.woowa.nureongi.ui.model.GuidanceStepUiModel
 import com.woowa.nureongi.ui.model.GuidanceUiState
 import com.woowa.nureongi.ui.model.PreviewGuidanceUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
+
+@Composable
+fun GuidanceRoute(
+    initialState: GuidanceUiState,
+    onCloseGuidance: () -> Unit,
+    onVoiceGuideClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: GuidanceViewModel = viewModel {
+        GuidanceViewModel(initialState = initialState)
+    },
+) {
+    GuidanceScreen(
+        state = viewModel.uiState,
+        onNextStepClick = viewModel::onNextStep,
+        onCloseClick = onCloseGuidance,
+        onVoiceGuideClick = onVoiceGuideClick,
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun GuidanceScreen(
@@ -67,7 +88,10 @@ fun GuidanceScreen(
                     .padding(top = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                CurrentGuidanceCard(guidance = state.currentGuidance)
+                CurrentGuidanceCard(
+                    guidance = state.currentGuidance,
+                    isArrived = state.isArrived,
+                )
                 GuidanceSummaryCards(
                     remainingDistanceText = state.remainingDistanceText,
                     remainingTactileBlockText = state.remainingTactileBlockText,
@@ -77,7 +101,7 @@ fun GuidanceScreen(
             GuidanceBottomActions(
                 nextButtonText = state.nextButtonText,
                 onVoiceGuideClick = onVoiceGuideClick,
-                onNextStepClick = onNextStepClick,
+                onNextStepClick = if (state.isArrived) onCloseClick else onNextStepClick,
             )
         }
     }
@@ -116,6 +140,7 @@ fun StepProgressBar(
 @Composable
 fun CurrentGuidanceCard(
     guidance: GuidanceStepUiModel,
+    isArrived: Boolean,
     modifier: Modifier = Modifier,
 ) {
     DirectionGuideCard(
@@ -123,7 +148,11 @@ fun CurrentGuidanceCard(
         landmark = guidance.landmark,
         guideMessage = guidance.guideMessage,
         modifier = modifier.semantics {
-            liveRegion = LiveRegionMode.Polite
+            liveRegion = if (isArrived) {
+                LiveRegionMode.Assertive
+            } else {
+                LiveRegionMode.Polite
+            }
         },
         leadingIcon = {
             StraightArrowIcon(
@@ -208,6 +237,22 @@ private fun GuidanceScreenPreview() {
     NureongiTheme {
         GuidanceScreen(
             state = PreviewGuidanceUiState,
+            onNextStepClick = {},
+            onCloseClick = {},
+            onVoiceGuideClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ArrivedGuidanceScreenPreview() {
+    NureongiTheme {
+        GuidanceScreen(
+            state = PreviewGuidanceUiState.copy(
+                currentStepIndex = PreviewGuidanceUiState.steps.lastIndex,
+                isArrived = true,
+            ),
             onNextStepClick = {},
             onCloseClick = {},
             onVoiceGuideClick = {},

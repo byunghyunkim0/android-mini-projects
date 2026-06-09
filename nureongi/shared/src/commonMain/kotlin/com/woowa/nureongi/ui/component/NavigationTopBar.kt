@@ -3,10 +3,12 @@ package com.woowa.nureongi.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -87,21 +89,26 @@ fun BackNavigationTopBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = "‹ 뒤로",
-            style = NureongiTypography.ItemDescription,
-            color = NureongiColors.Accent,
+        Box(
             modifier = Modifier
+                .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
                 .clickable(
                     onClickLabel = "뒤로 가기",
                     role = Role.Button,
                     onClick = onBackClick,
                 )
-                .padding(8.dp),
-        )
+                .padding(end = 8.dp),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            Text(
+                text = "‹ 뒤로",
+                style = NureongiTypography.ItemTitle,
+                color = NureongiColors.Accent,
+            )
+        }
         Text(
             text = title,
-            style = NureongiTypography.SectionHeader,
+            style = NureongiTypography.ScreenTitle,
             color = NureongiColors.TextPrimary,
             modifier = Modifier.semantics { heading() },
         )

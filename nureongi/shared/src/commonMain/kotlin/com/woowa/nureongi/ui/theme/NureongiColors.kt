@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 object NureongiColors {
     val Background = Color(0xFF121212)
     val Surface = Color(0xFF1E1E1E)
+    val SelectedSurface = Color(0xFF2A250E)
     val SurfaceBorder = Color(0xFF303030)
     val IconSurface = Color(0xFF252525)
 

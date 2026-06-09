@@ -2,29 +2,80 @@ package com.woowa.nureongi.ui.model
 
 data class GuidanceUiState(
     val destinationName: String,
-    val currentStep: Int,
-    val totalSteps: Int,
-    val currentGuidance: GuidanceStepUiModel,
-    val remainingDistanceText: String,
-    val remainingTactileBlockText: String,
-    val nextButtonText: String,
+    val steps: List<GuidanceStepUiModel>,
+    val currentStepIndex: Int = 0,
+    val isArrived: Boolean = false,
+    val arrivalGuidance: GuidanceStepUiModel,
     val miniMap: MiniMapUiModel,
-)
+) {
+    init {
+        require(steps.isNotEmpty())
+        require(currentStepIndex in steps.indices)
+    }
+
+    val currentStep: Int
+        get() = currentStepIndex + 1
+
+    val totalSteps: Int
+        get() = steps.size
+
+    val currentGuidance: GuidanceStepUiModel
+        get() = if (isArrived) arrivalGuidance else steps[currentStepIndex]
+
+    val remainingDistanceText: String
+        get() = currentGuidance.remainingDistanceText
+
+    val remainingTactileBlockText: String
+        get() = currentGuidance.remainingTactileBlockText
+
+    val nextButtonText: String
+        get() = currentGuidance.actionButtonText
+}
 
 data class GuidanceStepUiModel(
     val instruction: String,
     val landmark: String,
     val guideMessage: String,
+    val remainingDistanceText: String,
+    val remainingTactileBlockText: String,
+    val actionButtonText: String,
 )
 
 internal val PreviewGuidanceUiState = GuidanceUiState(
     destinationName = "2번 출구",
-    currentStep = 1,
-    totalSteps = 3,
-    currentGuidance = GuidanceStepUiModel(
-        instruction = "8m 직진",
-        landmark = "다음 점형 블록 · 출구 갈림길",
-        guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. 8미터 앞에 갈림길이 있습니다.",
+    steps = listOf(
+        GuidanceStepUiModel(
+            instruction = "8m 직진",
+            landmark = "다음 점형 블록 · 출구 갈림길",
+            guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. 8미터 앞에 갈림길이 있습니다.",
+            remainingDistanceText = "20m",
+            remainingTactileBlockText = "2개",
+            actionButtonText = "다음 점형 블록 도착 ›",
+        ),
+        GuidanceStepUiModel(
+            instruction = "오른쪽 회전",
+            landmark = "출구 방향 점형 블록",
+            guideMessage = "점형 블록에서 오른쪽으로 회전하세요.",
+            remainingDistanceText = "12m",
+            remainingTactileBlockText = "1개",
+            actionButtonText = "다음 점형 블록 도착 ›",
+        ),
+        GuidanceStepUiModel(
+            instruction = "12m 직진",
+            landmark = "2번 출구",
+            guideMessage = "앞으로 12미터 직진하면 2번 출구에 도착합니다.",
+            remainingDistanceText = "12m",
+            remainingTactileBlockText = "0개",
+            actionButtonText = "목적지 도착 ›",
+        ),
+    ),
+    arrivalGuidance = GuidanceStepUiModel(
+        instruction = "도착",
+        landmark = "2번 출구",
+        guideMessage = "2번 출구에 도착했습니다. 안내를 종료하려면 안내 종료 버튼을 누르세요.",
+        remainingDistanceText = "0m",
+        remainingTactileBlockText = "0개",
+        actionButtonText = "안내 종료",
     ),
     remainingDistanceText = "20m",
     remainingTactileBlockText = "2개",
