@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -21,6 +22,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.DirectionGuideCard
@@ -47,8 +49,10 @@ fun GuidanceRoute(
         GuidanceViewModel(initialState = initialState)
     },
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     GuidanceScreen(
-        state = viewModel.uiState,
+        state = uiState,
         onNextStepClick = viewModel::onNextStep,
         onCloseClick = onCloseGuidance,
         onVoiceGuideClick = onVoiceGuideClick,
