@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,17 +19,15 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.DirectionGuideCard
 import com.woowa.nureongi.ui.component.NavigationTopBar
 import com.woowa.nureongi.ui.component.SegmentedProgressIndicator
 import com.woowa.nureongi.ui.component.StatTile
 import com.woowa.nureongi.ui.component.StraightArrowIcon
+import com.woowa.nureongi.ui.component.TactileMiniMap
 import com.woowa.nureongi.ui.component.VoiceGuideButton
 import com.woowa.nureongi.ui.model.GuidanceStepUiModel
 import com.woowa.nureongi.ui.model.GuidanceUiState
@@ -75,7 +72,7 @@ fun GuidanceScreen(
                     remainingDistanceText = state.remainingDistanceText,
                     remainingTactileBlockText = state.remainingTactileBlockText,
                 )
-                Spacer(modifier = Modifier.height(72.dp))
+                TactileMiniMap(uiModel = state.miniMap)
             }
             GuidanceBottomActions(
                 nextButtonText = state.nextButtonText,

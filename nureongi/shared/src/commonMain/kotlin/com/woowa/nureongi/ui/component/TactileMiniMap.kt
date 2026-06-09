@@ -24,6 +24,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.woowa.nureongi.ui.model.MiniMapUiModel
 import com.woowa.nureongi.ui.model.RouteNodeUiModel
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
@@ -42,11 +43,8 @@ private const val ROUTE_LINE_STROKE_WIDTH = 6f
 private const val LABEL_OFFSET = 6f
 
 @Composable
-fun RouteMapCard(
-    title: String,
-    rows: Int,
-    columns: Int,
-    path: List<RouteNodeUiModel>,
+fun TactileMiniMap(
+    uiModel: MiniMapUiModel,
     modifier: Modifier = Modifier,
 ) {
     val textMeasurer = rememberTextMeasurer()
@@ -54,7 +52,7 @@ fun RouteMapCard(
         fontSize = NureongiTypography.ItemDescription.fontSize,
         color = NureongiColors.Accent,
     )
-    val routeDescription = path.joinToString(separator = " → ") { it.label ?: "경유 지점" }
+    val routeDescription = uiModel.path.joinToString(separator = " → ") { it.label ?: "경유 지점" }
 
     Column(
         modifier = modifier
@@ -64,7 +62,7 @@ fun RouteMapCard(
             .padding(20.dp),
     ) {
         Text(
-            text = title,
+            text = uiModel.title,
             style = NureongiTypography.ItemDescription,
             color = NureongiColors.TextSecondary,
         )
@@ -73,16 +71,16 @@ fun RouteMapCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .semantics { contentDescription = "$title 경로: $routeDescription" },
+                    .semantics { contentDescription = "${uiModel.title} 경로: $routeDescription" },
             ) {
-                if (rows < 2 || columns < 2) return@Canvas
+                if (uiModel.rows < 2 || uiModel.columns < 2) return@Canvas
 
-                val cellWidth = size.width / (columns - 1)
-                val cellHeight = size.height / (rows - 1)
+                val cellWidth = size.width / (uiModel.columns - 1)
+                val cellHeight = size.height / (uiModel.rows - 1)
 
-                drawBackgroundGrid(rows = rows, columns = columns, cellWidth = cellWidth, cellHeight = cellHeight)
+                drawBackgroundGrid(rows = uiModel.rows, columns = uiModel.columns, cellWidth = cellWidth, cellHeight = cellHeight)
                 drawHighlightedRoute(
-                    path = path,
+                    path = uiModel.path,
                     cellWidth = cellWidth,
                     cellHeight = cellHeight,
                     textMeasurer = textMeasurer,
@@ -176,7 +174,7 @@ private fun DrawScope.drawHighlightedRoute(
 
 @Preview
 @Composable
-private fun RouteMapCardPreview() {
+private fun TactileMiniMapPreview() {
     NureongiTheme {
         Column(
             modifier = Modifier
@@ -184,15 +182,17 @@ private fun RouteMapCardPreview() {
                 .background(NureongiColors.Background)
                 .padding(20.dp),
         ) {
-            RouteMapCard(
-                title = "한빛역 · 점자 블럭 지도",
-                rows = 5,
-                columns = 3,
-                path = listOf(
-                    RouteNodeUiModel(row = 2, column = 1, label = "개찰구", state = RouteNodeUiModel.State.PASSED),
-                    RouteNodeUiModel(row = 1, column = 1, label = "갈림길", state = RouteNodeUiModel.State.PASSED),
-                    RouteNodeUiModel(row = 1, column = 2, label = "2번 출구", state = RouteNodeUiModel.State.HIGHLIGHTED),
-                ),
+            TactileMiniMap(
+                uiModel = MiniMapUiModel(
+                    title = "한빛역 · 점자 블럭 지도",
+                    rows = 5,
+                    columns = 3,
+                    path = listOf(
+                        RouteNodeUiModel(row = 2, column = 1, label = "개찰구", state = RouteNodeUiModel.State.PASSED),
+                        RouteNodeUiModel(row = 1, column = 1, label = "갈림길", state = RouteNodeUiModel.State.PASSED),
+                        RouteNodeUiModel(row = 1, column = 2, label = "2번 출구", state = RouteNodeUiModel.State.HIGHLIGHTED),
+                    )
+                )
             )
         }
     }
