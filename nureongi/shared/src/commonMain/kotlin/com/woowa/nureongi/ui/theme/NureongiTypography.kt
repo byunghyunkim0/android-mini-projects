@@ -6,6 +6,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 object NureongiTypography {
+    val ScreenTitle = TextStyle(
+        fontSize = 28.sp,
+        lineHeight = 34.sp,
+        fontWeight = FontWeight.ExtraBold,
+    )
     val SectionHeader = TextStyle(
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold
