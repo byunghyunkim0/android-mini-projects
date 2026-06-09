@@ -36,6 +36,7 @@ fun PlaceListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val containerColor = if (selected) NureongiColors.SelectedSurface else NureongiColors.Surface
     val borderColor = if (selected) NureongiColors.Accent else NureongiColors.SurfaceBorder
     val iconBackground = if (selected) NureongiColors.Accent else NureongiColors.IconSurface
     val dotColor = if (selected) NureongiColors.OnAccent else NureongiColors.Accent
@@ -44,7 +45,7 @@ fun PlaceListItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(NureongiColors.Surface)
+            .background(containerColor)
             .border(width = 2.dp, color = borderColor, shape = RoundedCornerShape(16.dp))
             .selectable(
                 selected = selected,

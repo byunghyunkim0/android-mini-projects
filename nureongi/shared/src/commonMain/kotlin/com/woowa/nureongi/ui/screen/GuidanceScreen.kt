@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +30,7 @@ import com.woowa.nureongi.ui.component.NavigationTopBar
 import com.woowa.nureongi.ui.component.SegmentedProgressIndicator
 import com.woowa.nureongi.ui.component.StatTile
 import com.woowa.nureongi.ui.component.StraightArrowIcon
+import com.woowa.nureongi.ui.component.TactileMiniMap
 import com.woowa.nureongi.ui.component.VoiceGuideButton
 import com.woowa.nureongi.ui.guidance.GuidanceViewModel
 import com.woowa.nureongi.ui.model.GuidanceStepUiModel
@@ -100,7 +100,7 @@ fun GuidanceScreen(
                     remainingDistanceText = state.remainingDistanceText,
                     remainingTactileBlockText = state.remainingTactileBlockText,
                 )
-                Spacer(modifier = Modifier.height(72.dp))
+                TactileMiniMap(uiModel = state.currentMiniMap)
             }
             GuidanceBottomActions(
                 nextButtonText = state.nextButtonText,

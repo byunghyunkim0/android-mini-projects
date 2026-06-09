@@ -6,6 +6,7 @@ data class GuidanceUiState(
     val currentStepIndex: Int = 0,
     val isArrived: Boolean = false,
     val arrivalGuidance: GuidanceStepUiModel,
+    val miniMap: MiniMapUiModel,
 ) {
     init {
         require(steps.isNotEmpty())
@@ -29,6 +30,27 @@ data class GuidanceUiState(
 
     val nextButtonText: String
         get() = currentGuidance.actionButtonText
+
+    /**
+     * currentStepIndex를 기준으로 miniMap의 path 노드 상태를 자동으로 계산해서 반환한다.
+     * - 현재 위치 노드(currentStepIndex): HIGHLIGHTED (반짝임 애니메이션)
+     * - 지나온 노드(index < currentStepIndex): PASSED (어둡게)
+     * - 아직 가지 않은 노드(index > currentStepIndex): NEUTRAL (기본)
+     * 단, 도착 상태이면 마지막 노드를 HIGHLIGHTED로 표시한다.
+     */
+    val currentMiniMap: MiniMapUiModel
+        get() {
+            val highlightedIndex = if (isArrived) miniMap.path.lastIndex else currentStepIndex
+            val updatedPath = miniMap.path.mapIndexed { index, node ->
+                val state = when {
+                    index == highlightedIndex -> RouteNodeUiModel.State.HIGHLIGHTED
+                    index < highlightedIndex -> RouteNodeUiModel.State.PASSED
+                    else -> RouteNodeUiModel.State.NEUTRAL
+                }
+                node.copy(state = state)
+            }
+            return miniMap.copy(path = updatedPath)
+        }
 }
 
 data class GuidanceStepUiModel(
@@ -76,4 +98,14 @@ internal val PreviewGuidanceUiState = GuidanceUiState(
         remainingTactileBlockText = "0개",
         actionButtonText = "안내 종료",
     ),
+    miniMap = MiniMapUiModel(
+        title = "한빛역 · 점자 블럭 지도",
+        rows = 5,
+        columns = 3,
+        path = listOf(
+            RouteNodeUiModel(row = 2, column = 1, label = "개찰구", state = RouteNodeUiModel.State.HIGHLIGHTED), // 출발지이자 현재 위치
+            RouteNodeUiModel(row = 1, column = 1, label = "갈림길", state = RouteNodeUiModel.State.NEUTRAL),
+            RouteNodeUiModel(row = 1, column = 2, label = "2번 출구", state = RouteNodeUiModel.State.NEUTRAL), // 목적지 (마지막 노드)
+        )
+    )
 )
