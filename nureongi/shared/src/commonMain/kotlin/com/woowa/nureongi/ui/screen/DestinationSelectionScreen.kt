@@ -83,7 +83,7 @@ private fun DestinationSelectionContent(
                 locationName = currentLocationName,
                 onChangeClick = onChangeLocationClick,
             )
-            DestinationSelectionDestinationList(
+            DestinationList(
                 modifier = Modifier.weight(1f),
                 destinations = destinations,
                 selectedIndex = selectedIndex,
@@ -132,7 +132,7 @@ private fun DestinationSelectionHeader(
 }
 
 @Composable
-private fun DestinationSelectionDestinationList(
+private fun DestinationList(
     modifier: Modifier = Modifier,
     destinations: List<PlaceUiModel>,
     selectedIndex: Int?,
