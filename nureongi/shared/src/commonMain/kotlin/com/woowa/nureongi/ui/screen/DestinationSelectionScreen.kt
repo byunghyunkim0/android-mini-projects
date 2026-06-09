@@ -11,47 +11,70 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowa.nureongi.ui.component.BrailleIcon
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.CurrentLocationBar
 import com.woowa.nureongi.ui.component.PlaceListItem
-import com.woowa.nureongi.ui.model.PlaceUiModel
+import com.woowa.nureongi.ui.destination.DestinationSelectionViewModel
+import com.woowa.nureongi.ui.model.DestinationItemUiModel
+import com.woowa.nureongi.ui.model.DestinationSelectionUiState
+import com.woowa.nureongi.ui.model.PreviewDestinationSelectionUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
 
 @Composable
-fun DestinationSelectionScreen(
-    currentLocationName: String,
-    destinations: List<PlaceUiModel>,
+fun DestinationSelectionRoute(
+    initialState: DestinationSelectionUiState,
     onChangeLocationClick: () -> Unit,
-    onStartNavigation: (PlaceUiModel) -> Unit,
+    onStartGuidance: (String) -> Unit,
+    viewModel: DestinationSelectionViewModel = viewModel {
+        DestinationSelectionViewModel(initialState = initialState)
+    },
     modifier: Modifier = Modifier,
 ) {
-    var selectedIndex by remember { mutableStateOf<Int?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    DestinationSelectionContent(
-        currentLocationName = currentLocationName,
-        destinations = destinations,
-        selectedIndex = selectedIndex,
-        onSelectDestination = { index ->
-            selectedIndex = index
-        },
+    DestinationSelectionScreen(
+        state = uiState,
+        onDestinationSelected = viewModel::onDestinationSelected,
         onChangeLocationClick = onChangeLocationClick,
-        onStartNavigation = onStartNavigation,
+        onStartGuidance = {
+            viewModel.destinationIdForGuidance()?.let(onStartGuidance)
+        },
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun DestinationSelectionScreen(
+    state: DestinationSelectionUiState,
+    onDestinationSelected: (String) -> Unit,
+    onChangeLocationClick: () -> Unit,
+    onStartGuidance: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    DestinationSelectionContent(
+        currentLocationName = state.currentLocationName,
+        destinations = state.destinations,
+        selectedDestinationId = state.selectedDestinationId,
+        startGuidanceButtonText = state.startGuidanceButtonText,
+        canStartGuidance = state.canStartGuidance,
+        onDestinationSelected = onDestinationSelected,
+        onChangeLocationClick = onChangeLocationClick,
+        onStartGuidance = onStartGuidance,
         modifier = modifier,
     )
 }
@@ -59,15 +82,15 @@ fun DestinationSelectionScreen(
 @Composable
 private fun DestinationSelectionContent(
     currentLocationName: String,
-    destinations: List<PlaceUiModel>,
-    selectedIndex: Int?,
-    onSelectDestination: (Int) -> Unit,
+    destinations: List<DestinationItemUiModel>,
+    selectedDestinationId: String?,
+    startGuidanceButtonText: String,
+    canStartGuidance: Boolean,
+    onDestinationSelected: (String) -> Unit,
     onChangeLocationClick: () -> Unit,
-    onStartNavigation: (PlaceUiModel) -> Unit,
+    onStartGuidance: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedDestination = selectedIndex?.let { destinations.getOrNull(it) }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -86,8 +109,8 @@ private fun DestinationSelectionContent(
             DestinationList(
                 modifier = Modifier.weight(1f),
                 destinations = destinations,
-                selectedIndex = selectedIndex,
-                onSelectDestination = onSelectDestination,
+                selectedDestinationId = selectedDestinationId,
+                onDestinationSelected = onDestinationSelected,
             )
         }
 
@@ -95,8 +118,9 @@ private fun DestinationSelectionContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .height(72.dp),
-            selectedDestination = selectedDestination,
-            onStartNavigation = onStartNavigation,
+            text = startGuidanceButtonText,
+            enabled = canStartGuidance,
+            onStartGuidance = onStartGuidance,
         )
     }
 }
@@ -133,10 +157,10 @@ private fun DestinationSelectionHeader(
 
 @Composable
 private fun DestinationList(
+    destinations: List<DestinationItemUiModel>,
+    selectedDestinationId: String?,
+    onDestinationSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
-    destinations: List<PlaceUiModel>,
-    selectedIndex: Int?,
-    onSelectDestination: (Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -161,11 +185,14 @@ private fun DestinationList(
             contentPadding = PaddingValues(bottom = 88.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            itemsIndexed(destinations) { index, destination ->
+            items(
+                items = destinations,
+                key = { destination -> destination.id },
+            ) { destination ->
                 PlaceListItem(
-                    place = destination,
-                    selected = index == selectedIndex,
-                    onClick = { onSelectDestination(index) },
+                    place = destination.place,
+                    selected = destination.id == selectedDestinationId,
+                    onClick = { onDestinationSelected(destination.id) },
                 )
             }
         }
@@ -174,49 +201,43 @@ private fun DestinationList(
 
 @Composable
 private fun DestinationSelectionCtaButton(
+    text: String,
+    enabled: Boolean,
+    onStartGuidance: () -> Unit,
     modifier: Modifier = Modifier,
-    selectedDestination: PlaceUiModel?,
-    onStartNavigation: (PlaceUiModel) -> Unit,
 ) {
-    if (selectedDestination != null) {
-        CtaButton(
-            text = "${selectedDestination.name}까지 안내 시작",
-            onClick = { onStartNavigation(selectedDestination) },
-            containerColor = NureongiColors.Accent,
-            contentColor = NureongiColors.OnAccent,
-            modifier = modifier,
-        )
-    } else {
-        CtaButton(
-            text = "목적지를 선택하세요",
-            onClick = {},
-            enabled = false,
-            containerColor = NureongiColors.Disabled,
-            contentColor = NureongiColors.OnDisabled,
-            modifier = modifier,
+    CtaButton(
+        text = text,
+        onClick = onStartGuidance,
+        enabled = enabled,
+        containerColor = if (enabled) NureongiColors.Accent else NureongiColors.Disabled,
+        contentColor = if (enabled) NureongiColors.OnAccent else NureongiColors.OnDisabled,
+        modifier = modifier,
+    )
+}
+
+@Preview
+@Composable
+private fun DestinationSelectionScreenPreview() {
+    NureongiTheme {
+        DestinationSelectionScreen(
+            state = PreviewDestinationSelectionUiState.copy(selectedDestinationId = "exit-2"),
+            onDestinationSelected = {},
+            onChangeLocationClick = {},
+            onStartGuidance = {},
         )
     }
 }
 
-private val previewDestinations = listOf(
-    PlaceUiModel("1번 출구", "지상 · 버스정류장 방면"),
-    PlaceUiModel("2번 출구", "지상 · 광장 방면"),
-    PlaceUiModel("화장실", "대합실 왼쪽"),
-    PlaceUiModel("고객센터", "대합실 오른쪽"),
-    PlaceUiModel("계단", "승강장 방면 계단"),
-)
-
 @Preview
 @Composable
-private fun DestinationSelectionContentPreview() {
+private fun UnselectedDestinationSelectionScreenPreview() {
     NureongiTheme {
-        DestinationSelectionContent(
-            currentLocationName = "개찰구",
-            destinations = previewDestinations,
-            selectedIndex = 1,
-            onSelectDestination = {},
+        DestinationSelectionScreen(
+            state = PreviewDestinationSelectionUiState,
+            onDestinationSelected = {},
             onChangeLocationClick = {},
-            onStartNavigation = {},
+            onStartGuidance = {},
         )
     }
 }
