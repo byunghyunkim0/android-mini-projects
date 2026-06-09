@@ -36,8 +36,8 @@ fun PlaceListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val borderColor = if (selected) NureongiColors.Accent else NureongiColors.Surface
-    val iconBackground = if (selected) NureongiColors.Accent else NureongiColors.Surface
+    val borderColor = if (selected) NureongiColors.Accent else NureongiColors.SurfaceBorder
+    val iconBackground = if (selected) NureongiColors.Accent else NureongiColors.IconSurface
     val dotColor = if (selected) NureongiColors.OnAccent else NureongiColors.Accent
 
     Row(
@@ -49,19 +49,19 @@ fun PlaceListItem(
             .selectable(
                 selected = selected,
                 onClick = onClick,
-                role = Role.Button,
+                role = Role.RadioButton,
             )
             .semantics {
                 this.selected = selected
             }
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(20.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         BrailleIcon(
             backgroundColor = iconBackground,
             dotColor = dotColor,
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(56.dp)
         )
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(

@@ -5,6 +5,8 @@ import androidx.compose.ui.graphics.Color
 object NureongiColors {
     val Background = Color(0xFF121212)
     val Surface = Color(0xFF1E1E1E)
+    val SurfaceBorder = Color(0xFF303030)
+    val IconSurface = Color(0xFF252525)
 
     val Accent = Color(0xFFFFC400)
     val OnAccent = Color(0xFF000000)
