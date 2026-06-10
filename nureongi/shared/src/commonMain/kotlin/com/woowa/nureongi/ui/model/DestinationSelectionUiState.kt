@@ -8,7 +8,7 @@ data class DestinationSelectionUiState(
     val error: UiError? = null,
 ) {
     val currentLocationName: String
-        get() = currentLocation?.name ?: "현재 위치를 선택하세요"
+        get() = currentLocation?.name ?: "현재 위치를 선택해 주세요"
 
     val selectedDestination: DestinationItemUiModel?
         get() = destinations.firstOrNull { it.id == selectedDestinationId }
@@ -39,11 +39,5 @@ internal val PreviewDestinationSelectionUiState = DestinationSelectionUiState(
         nodeId = "gate",
         name = "개찰구",
     ),
-    destinations = listOf(
-        DestinationItemUiModel("exit-1", PlaceUiModel("1번 출구", "지상 · 버스정류장 방면")),
-        DestinationItemUiModel("exit-2", PlaceUiModel("2번 출구", "지상 · 광장 방면")),
-        DestinationItemUiModel("restroom", PlaceUiModel("화장실", "대합실 왼쪽")),
-        DestinationItemUiModel("service-center", PlaceUiModel("고객센터", "대합실 오른쪽")),
-        DestinationItemUiModel("stairs", PlaceUiModel("계단", "승강장 방면 계단")),
-    ),
+    destinations = PangyoStationUiData.destinations,
 )

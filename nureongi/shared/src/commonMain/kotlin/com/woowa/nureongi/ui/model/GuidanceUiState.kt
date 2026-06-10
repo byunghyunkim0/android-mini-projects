@@ -99,7 +99,7 @@ internal val PreviewGuidanceUiState = GuidanceUiState(
         actionButtonText = "안내 종료",
     ),
     miniMap = MiniMapUiModel(
-        title = "한빛역 · 점자 블럭 지도",
+        title = "판교역 · 점자 블럭 지도",
         rows = 5,
         columns = 3,
         path = listOf(

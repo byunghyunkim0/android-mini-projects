@@ -14,49 +14,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowa.nureongi.ui.component.BrailleIcon
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.CurrentLocationBar
 import com.woowa.nureongi.ui.component.PlaceListItem
-import com.woowa.nureongi.ui.destination.DestinationSelectionViewModel
 import com.woowa.nureongi.ui.model.DestinationItemUiModel
 import com.woowa.nureongi.ui.model.DestinationSelectionUiState
 import com.woowa.nureongi.ui.model.PreviewDestinationSelectionUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
-
-@Composable
-fun DestinationSelectionRoute(
-    initialState: DestinationSelectionUiState,
-    onChangeLocationClick: () -> Unit,
-    onStartGuidance: (String) -> Unit,
-    viewModel: DestinationSelectionViewModel = viewModel {
-        DestinationSelectionViewModel(initialState = initialState)
-    },
-    modifier: Modifier = Modifier,
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    DestinationSelectionScreen(
-        state = uiState,
-        onDestinationSelected = viewModel::onDestinationSelected,
-        onChangeLocationClick = onChangeLocationClick,
-        onStartGuidance = {
-            viewModel.destinationIdForGuidance()?.let(onStartGuidance)
-        },
-        modifier = modifier,
-    )
-}
 
 @Composable
 fun DestinationSelectionScreen(
@@ -72,6 +47,7 @@ fun DestinationSelectionScreen(
         selectedDestinationId = state.selectedDestinationId,
         startGuidanceButtonText = state.startGuidanceButtonText,
         canStartGuidance = state.canStartGuidance,
+        errorMessage = state.error?.message,
         onDestinationSelected = onDestinationSelected,
         onChangeLocationClick = onChangeLocationClick,
         onStartGuidance = onStartGuidance,
@@ -86,6 +62,7 @@ private fun DestinationSelectionContent(
     selectedDestinationId: String?,
     startGuidanceButtonText: String,
     canStartGuidance: Boolean,
+    errorMessage: String?,
     onDestinationSelected: (String) -> Unit,
     onChangeLocationClick: () -> Unit,
     onStartGuidance: () -> Unit,
@@ -106,6 +83,9 @@ private fun DestinationSelectionContent(
                 locationName = currentLocationName,
                 onChangeClick = onChangeLocationClick,
             )
+            errorMessage?.let { message ->
+                DestinationSelectionErrorMessage(message = message)
+            }
             DestinationOptions(
                 modifier = Modifier.weight(1f),
                 destinations = destinations,
@@ -123,6 +103,21 @@ private fun DestinationSelectionContent(
             onStartGuidance = onStartGuidance,
         )
     }
+}
+
+@Composable
+private fun DestinationSelectionErrorMessage(
+    modifier: Modifier = Modifier,
+    message: String,
+) {
+    Text(
+        text = message,
+        style = NureongiTypography.ItemDescription,
+        color = NureongiColors.Accent,
+        modifier = modifier.semantics {
+            liveRegion = LiveRegionMode.Assertive
+        },
+    )
 }
 
 @Composable

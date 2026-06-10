@@ -12,46 +12,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowa.nureongi.ui.component.BackNavigationTopBar
 import com.woowa.nureongi.ui.component.PlaceListItem
-import com.woowa.nureongi.ui.location.CurrentLocationSelectionViewModel
 import com.woowa.nureongi.ui.model.CurrentLocationItemUiModel
 import com.woowa.nureongi.ui.model.CurrentLocationSelectionUiState
 import com.woowa.nureongi.ui.model.PreviewCurrentLocationSelectionUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
-
-@Composable
-fun CurrentLocationSelectionRoute(
-    initialState: CurrentLocationSelectionUiState,
-    onBackClick: () -> Unit,
-    onLocationSelected: (String) -> Unit,
-    viewModel: CurrentLocationSelectionViewModel = viewModel {
-        CurrentLocationSelectionViewModel(initialState = initialState)
-    },
-    modifier: Modifier = Modifier,
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    CurrentLocationSelectionScreen(
-        state = uiState,
-        onBackClick = onBackClick,
-        onLocationSelected = { locationId ->
-            viewModel.onLocationSelected(locationId)
-            viewModel.locationIdForResult()
-                ?.takeIf { selectedLocationId -> selectedLocationId == locationId }
-                ?.let(onLocationSelected)
-        },
-        modifier = modifier,
-    )
-}
 
 @Composable
 fun CurrentLocationSelectionScreen(
