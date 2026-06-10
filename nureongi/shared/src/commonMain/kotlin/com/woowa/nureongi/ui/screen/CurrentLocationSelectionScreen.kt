@@ -9,51 +9,55 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woowa.nureongi.ui.component.BackNavigationTopBar
 import com.woowa.nureongi.ui.component.PlaceListItem
-import com.woowa.nureongi.ui.model.PlaceUiModel
+import com.woowa.nureongi.ui.location.CurrentLocationSelectionViewModel
+import com.woowa.nureongi.ui.model.CurrentLocationItemUiModel
+import com.woowa.nureongi.ui.model.CurrentLocationSelectionUiState
+import com.woowa.nureongi.ui.model.PreviewCurrentLocationSelectionUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
 
 @Composable
-fun CurrentLocationSelectionScreen(
-    locations: List<PlaceUiModel>,
+fun CurrentLocationSelectionRoute(
+    initialState: CurrentLocationSelectionUiState,
     onBackClick: () -> Unit,
-    onLocationSelected: (PlaceUiModel) -> Unit,
+    onLocationSelected: (String) -> Unit,
+    viewModel: CurrentLocationSelectionViewModel = viewModel {
+        CurrentLocationSelectionViewModel(initialState = initialState)
+    },
     modifier: Modifier = Modifier,
-    initialSelectedIndex: Int? = null,
 ) {
-    var selectedIndex by remember(initialSelectedIndex) { mutableStateOf(initialSelectedIndex) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    CurrentLocationSelectionContent(
-        locations = locations,
-        selectedIndex = selectedIndex,
+    CurrentLocationSelectionScreen(
+        state = uiState,
         onBackClick = onBackClick,
-        onSelectLocation = { index ->
-            selectedIndex = index
-            locations.getOrNull(index)?.let(onLocationSelected)
+        onLocationSelected = { locationId ->
+            viewModel.onLocationSelected(locationId)
+            viewModel.locationIdForResult()
+                ?.takeIf { selectedLocationId -> selectedLocationId == locationId }
+                ?.let(onLocationSelected)
         },
         modifier = modifier,
     )
 }
 
 @Composable
-private fun CurrentLocationSelectionContent(
-    locations: List<PlaceUiModel>,
-    selectedIndex: Int?,
+fun CurrentLocationSelectionScreen(
+    state: CurrentLocationSelectionUiState,
     onBackClick: () -> Unit,
-    onSelectLocation: (Int) -> Unit,
+    onLocationSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -69,9 +73,9 @@ private fun CurrentLocationSelectionContent(
         ) {
             CurrentLocationSelectionHeader(onBackClick = onBackClick)
             LocationList(
-                locations = locations,
-                selectedIndex = selectedIndex,
-                onSelectLocation = onSelectLocation,
+                locations = state.locations,
+                selectedLocationId = state.selectedLocationId,
+                onLocationSelected = onLocationSelected,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -101,9 +105,9 @@ private fun CurrentLocationSelectionHeader(
 
 @Composable
 private fun LocationList(
-    locations: List<PlaceUiModel>,
-    selectedIndex: Int?,
-    onSelectLocation: (Int) -> Unit,
+    locations: List<CurrentLocationItemUiModel>,
+    selectedLocationId: String?,
+    onLocationSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -111,35 +115,39 @@ private fun LocationList(
         contentPadding = PaddingValues(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        itemsIndexed(locations) { index, location ->
+        items(
+            items = locations,
+            key = { location -> location.id },
+        ) { location ->
             PlaceListItem(
-                place = location,
-                selected = index == selectedIndex,
-                onClick = { onSelectLocation(index) },
+                place = location.place,
+                selected = location.id == selectedLocationId,
+                onClick = { onLocationSelected(location.id) },
             )
         }
     }
 }
 
-private val previewLocations = listOf(
-    PlaceUiModel("1번 출구", "지상 · 버스정류장 방면"),
-    PlaceUiModel("2번 출구", "지상 · 광장 방면"),
-    PlaceUiModel("개찰구", "대합실 입구"),
-    PlaceUiModel("화장실", "대합실 왼쪽"),
-    PlaceUiModel("고객센터", "대합실 오른쪽"),
-    PlaceUiModel("계단", "승강장 방면 계단"),
-    PlaceUiModel("엘리베이터", "휠체어 · 유모차"),
-)
+@Preview
+@Composable
+private fun CurrentLocationSelectionScreenPreview() {
+    NureongiTheme {
+        CurrentLocationSelectionScreen(
+            state = PreviewCurrentLocationSelectionUiState,
+            onBackClick = {},
+            onLocationSelected = {},
+        )
+    }
+}
 
 @Preview
 @Composable
-private fun CurrentLocationSelectionContentPreview() {
+private fun UnselectedCurrentLocationSelectionScreenPreview() {
     NureongiTheme {
-        CurrentLocationSelectionContent(
-            locations = previewLocations,
-            selectedIndex = 2,
+        CurrentLocationSelectionScreen(
+            state = PreviewCurrentLocationSelectionUiState.copy(selectedLocationId = null),
             onBackClick = {},
-            onSelectLocation = {},
+            onLocationSelected = {},
         )
     }
 }
