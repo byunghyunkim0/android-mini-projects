@@ -3,17 +3,17 @@ package com.woowa.nureongi.ui.navigation
 import androidx.navigation.NavController
 
 internal fun NavController.navigateToCurrentLocationSelection() {
-    navigate(CurrentLocationDestination) {
+    navigate(CurrentLocationNavRoute) {
         launchSingleTop = true
     }
 }
 
-internal fun NavController.navigateToGuidance(destination: GuidanceDestination) {
-    navigate(destination) {
+internal fun NavController.navigateToGuidance(route: GuidanceNavRoute) {
+    navigate(route) {
         launchSingleTop = true
     }
 }
 
 internal fun NavController.finishGuidance(): Boolean {
-    return popBackStack<DestinationSelectionDestination>(inclusive = false)
+    return popBackStack<DestinationSelectionNavRoute>(inclusive = false)
 }

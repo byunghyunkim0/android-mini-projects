@@ -67,7 +67,7 @@ class NureongiAppViewModelTest {
 
         val state = viewModel.uiState.value
         assertEquals(
-            GuidanceDestination(
+            GuidanceNavRoute(
                 currentLocationId = "gate",
                 destinationId = "exit-2",
             ),

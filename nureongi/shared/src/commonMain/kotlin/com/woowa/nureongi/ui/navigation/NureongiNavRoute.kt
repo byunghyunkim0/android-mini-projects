@@ -3,13 +3,13 @@ package com.woowa.nureongi.ui.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data object CurrentLocationDestination
+internal data object CurrentLocationNavRoute
 
 @Serializable
-internal data object DestinationSelectionDestination
+internal data object DestinationSelectionNavRoute
 
 @Serializable
-internal data class GuidanceDestination(
+internal data class GuidanceNavRoute(
     val currentLocationId: String,
     val destinationId: String,
 )

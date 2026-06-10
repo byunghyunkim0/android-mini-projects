@@ -61,7 +61,7 @@ internal class NureongiAppViewModel(
         }
     }
 
-    fun onStartGuidance(): GuidanceDestination? {
+    fun onStartGuidance(): GuidanceNavRoute? {
         val state = _uiState.value
         if (state.destinationState.isLoading) {
             return null
@@ -77,7 +77,7 @@ internal class NureongiAppViewModel(
                     destinationState = state.destinationState.copy(error = null),
                     guidanceState = result.guidanceState,
                 )
-                GuidanceDestination(
+                GuidanceNavRoute(
                     currentLocationId = currentLocation.nodeId,
                     destinationId = destination.id,
                 )
@@ -109,7 +109,7 @@ internal class NureongiAppViewModel(
     private fun updateRouteError(
         state: NureongiAppUiState,
         message: String,
-    ): GuidanceDestination? {
+    ): GuidanceNavRoute? {
         _uiState.value = state.withRouteError(message)
         return null
     }

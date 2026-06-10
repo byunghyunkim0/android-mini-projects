@@ -28,25 +28,25 @@ internal fun NureongiAppRoute(
 
     NavHost(
         navController = navController,
-        startDestination = DestinationSelectionDestination,
+        startDestination = DestinationSelectionNavRoute,
         modifier = modifier
             .fillMaxSize()
             .background(NureongiColors.Background),
     ) {
-        composable<CurrentLocationDestination> {
+        composable<CurrentLocationNavRoute> {
             CurrentLocationSelectionScreen(
                 state = uiState.currentLocationState,
                 onBackClick = navController::popBackStack,
                 onLocationSelected = { locationId ->
                     viewModel.onLocationSelected(locationId)?.let {
-                        navController.popBackStack<DestinationSelectionDestination>(
+                        navController.popBackStack<DestinationSelectionNavRoute>(
                             inclusive = false,
                         )
                     }
                 },
             )
         }
-        composable<DestinationSelectionDestination> {
+        composable<DestinationSelectionNavRoute> {
             DestinationSelectionScreen(
                 state = uiState.destinationState,
                 onDestinationSelected = viewModel::onDestinationSelected,
@@ -58,12 +58,12 @@ internal fun NureongiAppRoute(
                 },
             )
         }
-        composable<GuidanceDestination> { backStackEntry ->
-            val destination: GuidanceDestination = backStackEntry.toRoute()
-            LaunchedEffect(destination) {
+        composable<GuidanceNavRoute> { backStackEntry ->
+            val route: GuidanceNavRoute = backStackEntry.toRoute()
+            LaunchedEffect(route) {
                 viewModel.onGuidanceDestinationEntered(
-                    currentLocationId = destination.currentLocationId,
-                    destinationId = destination.destinationId,
+                    currentLocationId = route.currentLocationId,
+                    destinationId = route.destinationId,
                 )
             }
 
