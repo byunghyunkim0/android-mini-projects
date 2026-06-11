@@ -1,5 +1,11 @@
 package com.woowa.nureongi.ui.navigation
 
+import com.woowa.nureongi.domain.data.PangyoStationMapData
+import com.woowa.nureongi.domain.data.StationMapData
+import com.woowa.nureongi.domain.model.Route
+import com.woowa.nureongi.domain.model.RouteStep
+import com.woowa.nureongi.domain.service.Navigatable
+import com.woowa.nureongi.domain.service.Navigator
 import com.woowa.nureongi.ui.model.CurrentLocationUiModel
 import com.woowa.nureongi.ui.model.DestinationItemUiModel
 import com.woowa.nureongi.ui.model.GuidanceStepUiModel
@@ -24,7 +30,10 @@ internal sealed interface GuidanceRouteCalculationResult {
     ) : GuidanceRouteCalculationResult
 }
 
-internal class InMemoryGuidanceRouteCalculator : GuidanceRouteCalculator {
+internal class MapGuidanceRouteCalculator(
+    private val mapData: StationMapData = PangyoStationMapData.getMapData(),
+    private val navigator: Navigatable = Navigator(),
+) : GuidanceRouteCalculator {
     override fun calculate(
         currentLocation: CurrentLocationUiModel,
         destination: DestinationItemUiModel,
@@ -35,94 +44,109 @@ internal class InMemoryGuidanceRouteCalculator : GuidanceRouteCalculator {
             )
         }
 
-        val start = stationNodes[currentLocation.nodeId]
-        val end = stationNodes[destination.id]
-        if (start == null || end == null) {
+        val station = mapData.station
+        val startPoint = station.findNavigationPoint(currentLocation.nodeId)
+        val destinationPoint = station.findNavigationPoint(destination.id)
+        val destinationNode = station.findNode(destination.id)
+        if (startPoint == null || destinationPoint == null || destinationNode == null) {
             return GuidanceRouteCalculationResult.Failure(
                 message = "경로를 찾을 수 없습니다. 현재 위치나 목적지를 다시 선택해 주세요.",
             )
         }
 
-        val path = buildList {
-            add(start.copy(label = currentLocation.name))
-            stationNodes["gate"]
-                ?.takeIf { junction -> junction.position != start.position && junction.position != end.position }
-                ?.let(::add)
-            add(end.copy(label = destination.place.name))
-        }
-        val steps = path.mapIndexed { index, node ->
-            val remainingSegments = path.lastIndex - index
-            GuidanceStepUiModel(
-                instruction = if (index == path.lastIndex) {
-                    "${destination.place.name} 방향으로 직진"
-                } else {
-                    "다음 점형 블록까지 직진"
-                },
-                landmark = node.label,
-                guideMessage = if (index == path.lastIndex) {
-                    "${destination.place.name}까지 직진하면 목적지에 도착합니다."
-                } else {
-                    "다음 점형 블록까지 직진하세요."
-                },
-                remainingDistanceText = "${(remainingSegments + 1) * SegmentDistanceMeters}m",
-                remainingTactileBlockText = "${remainingSegments}개",
-                actionButtonText = if (index == path.lastIndex) {
-                    "목적지 도착 ›"
-                } else {
-                    "다음 점형 블록 도착 ›"
-                },
+        val route = runCatching {
+            navigator.findRoute(
+                station = station,
+                from = startPoint,
+                destination = destinationPoint,
+            )
+        }.getOrElse {
+            return GuidanceRouteCalculationResult.Failure(
+                message = "경로를 찾을 수 없습니다. 현재 위치나 목적지를 다시 선택해 주세요.",
             )
         }
 
         return GuidanceRouteCalculationResult.Success(
-            guidanceState = GuidanceUiState(
-                destinationName = destination.place.name,
-                steps = steps,
-                arrivalGuidance = GuidanceStepUiModel(
-                    instruction = "도착",
-                    landmark = destination.place.name,
-                    guideMessage = "${destination.place.name}에 도착했습니다. 안내를 종료하려면 안내 종료 버튼을 누르세요.",
-                    remainingDistanceText = "0m",
-                    remainingTactileBlockText = "0개",
-                    actionButtonText = "안내 종료",
-                ),
-                miniMap = MiniMapUiModel(
-                    title = "판교역 · 점자 블록 지도",
-                    rows = MapRows,
-                    columns = MapColumns,
-                    path = path.map { node ->
-                        RouteNodeUiModel(
-                            row = node.position.row,
-                            column = node.position.column,
-                            label = node.label,
-                        )
-                    },
-                ),
+            guidanceState = route.toGuidanceUiState(
+                destinationName = destinationNode.name,
+                mapData = mapData,
             ),
         )
     }
 }
 
-private data class StationNode(
-    val position: StationNodePosition,
-    val label: String,
-)
+private fun Route.toGuidanceUiState(
+    destinationName: String,
+    mapData: StationMapData,
+): GuidanceUiState {
+    val pathNodes = listOf(steps.first().fromNode) + steps.map(RouteStep::toNode)
 
-private data class StationNodePosition(
-    val row: Int,
-    val column: Int,
-)
+    return GuidanceUiState(
+        destinationName = destinationName,
+        steps = steps.mapIndexed { index, step ->
+            val previousAngle = if (index == 0) {
+                startPoint.initialAngle
+            } else {
+                steps[index - 1].edge.angle
+            }
+            val movement = movementInstruction(previousAngle, step.edge.angle)
+            val targetName = step.toNode.name
+            val isLastStep = index == steps.lastIndex
 
-private val stationNodes = mapOf(
-    "exit-1" to StationNode(StationNodePosition(0, 0), "1번 출구"),
-    "exit-2" to StationNode(StationNodePosition(0, 2), "2번 출구"),
-    "gate" to StationNode(StationNodePosition(2, 1), "개찰구"),
-    "restroom" to StationNode(StationNodePosition(2, 0), "화장실"),
-    "service-center" to StationNode(StationNodePosition(2, 2), "고객센터"),
-    "stairs" to StationNode(StationNodePosition(4, 0), "계단"),
-    "elevator" to StationNode(StationNodePosition(4, 2), "엘리베이터"),
-)
+            GuidanceStepUiModel(
+                instruction = "$movement ${formatDistance(step.edge.distance)} 이동",
+                landmark = targetName,
+                guideMessage = "$movement ${formatDistance(step.edge.distance)} 이동하면 $targetName 점형 블록에 도착합니다.",
+                remainingDistanceText = formatDistance(step.remainingDistance),
+                remainingTactileBlockText = "${steps.size - index}개",
+                actionButtonText = if (isLastStep) {
+                    "목적지 도착 ›"
+                } else {
+                    "다음 점형 블록 도착 ›"
+                },
+            )
+        },
+        arrivalGuidance = GuidanceStepUiModel(
+            instruction = "도착",
+            landmark = destinationName,
+            guideMessage = "${destinationName}에 도착했습니다. 안내를 종료하려면 안내 종료 버튼을 누르세요.",
+            remainingDistanceText = "0m",
+            remainingTactileBlockText = "0개",
+            actionButtonText = "안내 종료",
+        ),
+        miniMap = MiniMapUiModel(
+            title = "${mapData.station.name} · 점자 블록 지도",
+            rows = mapData.rows,
+            columns = mapData.columns,
+            path = pathNodes.map { node ->
+                val position = requireNotNull(mapData.nodePositions[node.id])
+                RouteNodeUiModel(
+                    row = position.row,
+                    column = position.column,
+                    label = node.name,
+                )
+            },
+        ),
+    )
+}
 
-private const val SegmentDistanceMeters = 8
-private const val MapRows = 5
-private const val MapColumns = 3
+private fun movementInstruction(
+    currentAngle: Int,
+    targetAngle: Int,
+): String {
+    val clockwiseDifference = (targetAngle - currentAngle + 360) % 360
+    return when (clockwiseDifference) {
+        in 0..30, in 330..359 -> "직진하여"
+        in 31..150 -> "오른쪽으로 회전한 뒤"
+        in 151..210 -> "뒤로 돌아"
+        else -> "왼쪽으로 회전한 뒤"
+    }
+}
+
+private fun formatDistance(distance: Float): String {
+    return if (distance % 1f == 0f) {
+        "${distance.toInt()}m"
+    } else {
+        "${distance}m"
+    }
+}

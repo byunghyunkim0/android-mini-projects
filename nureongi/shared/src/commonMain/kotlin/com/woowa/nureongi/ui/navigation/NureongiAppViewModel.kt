@@ -1,6 +1,8 @@
 package com.woowa.nureongi.ui.navigation
 
 import androidx.lifecycle.ViewModel
+import com.woowa.nureongi.domain.data.PangyoStationMapData
+import com.woowa.nureongi.domain.data.StationMapDataSource
 import com.woowa.nureongi.ui.model.CurrentLocationUiModel
 import com.woowa.nureongi.ui.model.GuidanceUiState
 import com.woowa.nureongi.ui.model.UiError
@@ -9,10 +11,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class NureongiAppViewModel(
-    initialState: NureongiAppUiState = NureongiAppUiState(),
-    private val routeCalculator: GuidanceRouteCalculator = InMemoryGuidanceRouteCalculator(),
+    mapDataSource: StationMapDataSource = PangyoStationMapData,
+    initialState: NureongiAppUiState? = null,
+    routeCalculator: GuidanceRouteCalculator? = null,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(initialState)
+    private val mapData = mapDataSource.getMapData()
+    private val routeCalculator = routeCalculator ?: MapGuidanceRouteCalculator(mapData)
+    private val _uiState = MutableStateFlow(
+        initialState ?: mapData.toInitialAppUiState(),
+    )
     val uiState = _uiState.asStateFlow()
 
     fun onLocationSelected(locationId: String): CurrentLocationUiModel? {

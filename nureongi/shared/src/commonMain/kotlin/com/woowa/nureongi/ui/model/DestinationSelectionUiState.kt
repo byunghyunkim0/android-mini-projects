@@ -39,5 +39,5 @@ internal val PreviewDestinationSelectionUiState = DestinationSelectionUiState(
         nodeId = "gate",
         name = "개찰구",
     ),
-    destinations = PangyoStationUiData.destinations,
+    destinations = PreviewStationMapData.toDestinationItems(),
 )
