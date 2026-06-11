@@ -1,7 +1,7 @@
 package com.woowa.nureongi.ui.navigation
 
-import com.woowa.nureongi.domain.data.PangyoStationMapData
 import com.woowa.nureongi.domain.data.StationMapData
+import com.woowa.nureongi.domain.data.WoowaEleventhFloorMapData
 import com.woowa.nureongi.domain.model.Route
 import com.woowa.nureongi.domain.model.RouteStep
 import com.woowa.nureongi.domain.service.Navigatable
@@ -31,7 +31,7 @@ internal sealed interface GuidanceRouteCalculationResult {
 }
 
 internal class MapGuidanceRouteCalculator(
-    private val mapData: StationMapData = PangyoStationMapData.getMapData(),
+    private val mapData: StationMapData = WoowaEleventhFloorMapData.getMapData(),
     private val navigator: Navigatable = Navigator(),
 ) : GuidanceRouteCalculator {
     override fun calculate(

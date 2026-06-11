@@ -1,7 +1,7 @@
 package com.woowa.nureongi.ui.model
 
 import com.woowa.nureongi.domain.data.StationMapData
-import com.woowa.nureongi.domain.data.PangyoStationMapData
+import com.woowa.nureongi.domain.data.WoowaEleventhFloorMapData
 
 internal fun StationMapData.toCurrentLocationItems(): List<CurrentLocationItemUiModel> {
     return station.navigationPoints.map { navigationPoint ->
@@ -29,4 +29,4 @@ internal fun StationMapData.toDestinationItems(): List<DestinationItemUiModel> {
     }
 }
 
-internal val PreviewStationMapData = PangyoStationMapData.getMapData()
+internal val PreviewStationMapData = WoowaEleventhFloorMapData.getMapData()

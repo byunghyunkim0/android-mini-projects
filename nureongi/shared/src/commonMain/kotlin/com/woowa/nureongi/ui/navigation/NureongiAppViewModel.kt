@@ -1,8 +1,8 @@
 package com.woowa.nureongi.ui.navigation
 
 import androidx.lifecycle.ViewModel
-import com.woowa.nureongi.domain.data.PangyoStationMapData
 import com.woowa.nureongi.domain.data.StationMapDataSource
+import com.woowa.nureongi.domain.data.WoowaEleventhFloorMapData
 import com.woowa.nureongi.ui.model.CurrentLocationUiModel
 import com.woowa.nureongi.ui.model.GuidanceUiState
 import com.woowa.nureongi.ui.model.UiError
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class NureongiAppViewModel(
-    mapDataSource: StationMapDataSource = PangyoStationMapData,
+    mapDataSource: StationMapDataSource = WoowaEleventhFloorMapData,
     initialState: NureongiAppUiState? = null,
     routeCalculator: GuidanceRouteCalculator? = null,
 ) : ViewModel() {

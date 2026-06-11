@@ -20,5 +20,5 @@ data class CurrentLocationItemUiModel(
 
 internal val PreviewCurrentLocationSelectionUiState = CurrentLocationSelectionUiState(
     locations = PreviewStationMapData.toCurrentLocationItems(),
-    selectedLocationId = "gate",
+    selectedLocationId = "a",
 )
