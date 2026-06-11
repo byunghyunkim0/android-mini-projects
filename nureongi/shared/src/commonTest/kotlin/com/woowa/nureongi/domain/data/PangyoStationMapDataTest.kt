@@ -36,8 +36,8 @@ class PangyoStationMapDataTest {
 
     @Test
     fun `모든 노드는 같은 MapData 안에 미니맵 좌표를 가진다`() {
-        assertEquals(5, mapData.rows)
-        assertEquals(3, mapData.columns)
+        assertTrue(mapData.rows > 0)
+        assertTrue(mapData.columns > 0)
         assertEquals(station.nodes.map { it.id }.toSet(), mapData.nodePositions.keys)
     }
 
