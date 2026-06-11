@@ -1,5 +1,7 @@
 package com.woowa.nureongi.ui.navigation
 
+import com.woowa.nureongi.domain.data.PangyoStationMapData
+import com.woowa.nureongi.domain.data.StationMapDataSource
 import com.woowa.nureongi.ui.model.CurrentLocationUiModel
 import com.woowa.nureongi.ui.model.DestinationItemUiModel
 import com.woowa.nureongi.ui.model.DestinationSelectionUiState
@@ -15,6 +17,31 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class NureongiAppViewModelTest {
+    @Test
+    fun `하나의 MapData를 화면 목록과 경로 서비스가 함께 사용한다`() {
+        var loadCount = 0
+        val mapDataSource = StationMapDataSource {
+            loadCount += 1
+            PangyoStationMapData.getMapData()
+        }
+        val viewModel = NureongiAppViewModel(mapDataSource = mapDataSource)
+
+        val state = viewModel.uiState.value
+        assertEquals(
+            state.currentLocationState.locations.map { it.id },
+            state.destinationState.destinations.map { it.id },
+        )
+        viewModel.onLocationSelected("gate")
+        viewModel.onDestinationSelected("exit-2")
+        viewModel.onStartGuidance()
+
+        assertEquals(1, loadCount)
+        assertEquals(
+            "대합실 중앙 갈림길",
+            viewModel.uiState.value.guidanceState?.miniMap?.path?.get(1)?.label,
+        )
+    }
+
     @Test
     fun `초기 상태는 현재 위치와 목적지가 선택되지 않아 안내를 시작할 수 없다`() {
         val state = NureongiAppViewModel().uiState.value
@@ -34,10 +61,11 @@ class NureongiAppViewModelTest {
         val currentLocation = viewModel.onLocationSelected("exit-1")
 
         val state = viewModel.uiState.value
+        val expectedName = PangyoStationMapData.getMapData().station.findNode("exit-1")!!.name
         assertEquals("exit-1", currentLocation?.nodeId)
         assertEquals("exit-1", state.currentLocationState.selectedLocationId)
         assertEquals("exit-1", state.destinationState.currentLocation?.nodeId)
-        assertEquals("1번 출구", state.destinationState.currentLocationName)
+        assertEquals(expectedName, state.destinationState.currentLocationName)
     }
 
     @Test
@@ -160,7 +188,7 @@ class NureongiAppViewModelTest {
 
     @Test
     fun `현재 위치와 같은 목적지를 선택하면 경로 계산 오류를 반환한다`() {
-        val calculator = InMemoryGuidanceRouteCalculator()
+        val calculator = MapGuidanceRouteCalculator()
 
         val result = calculator.calculate(
             currentLocation = CurrentLocationUiModel("exit-2", "2번 출구"),
@@ -179,7 +207,7 @@ class NureongiAppViewModelTest {
 
     @Test
     fun `등록된 위치와 목적지의 경로를 안내 상태로 계산한다`() {
-        val calculator = InMemoryGuidanceRouteCalculator()
+        val calculator = MapGuidanceRouteCalculator()
 
         val result = calculator.calculate(
             currentLocation = CurrentLocationUiModel("gate", "개찰구"),
@@ -190,10 +218,14 @@ class NureongiAppViewModelTest {
         )
 
         val success = assertIs<GuidanceRouteCalculationResult.Success>(result)
-        assertEquals("2번 출구", success.guidanceState.destinationName)
+        val station = PangyoStationMapData.getMapData().station
+        assertEquals(station.findNode("exit-2")!!.name, success.guidanceState.destinationName)
         assertEquals("개찰구", success.guidanceState.miniMap.path.first().label)
-        assertEquals("2번 출구", success.guidanceState.miniMap.path.last().label)
-        assertNotNull(success.guidanceState.steps.firstOrNull())
+        assertEquals("대합실 중앙 갈림길", success.guidanceState.miniMap.path[1].label)
+        assertEquals(station.findNode("exit-2")!!.name, success.guidanceState.miniMap.path.last().label)
+        assertEquals(2, success.guidanceState.steps.size)
+        assertEquals("직진하여 4m 이동", success.guidanceState.steps[0].instruction)
+        assertEquals("오른쪽으로 회전한 뒤 16m 이동", success.guidanceState.steps[1].instruction)
     }
 }
 
