@@ -216,7 +216,7 @@ private fun DestinationSelectionCtaButton(
 private fun DestinationSelectionScreenPreview() {
     NureongiTheme {
         DestinationSelectionScreen(
-            state = PreviewDestinationSelectionUiState.copy(selectedDestinationId = "exit-2"),
+            state = PreviewDestinationSelectionUiState.copy(selectedDestinationId = "e"),
             onDestinationSelected = {},
             onChangeLocationClick = {},
             onStartGuidance = {},

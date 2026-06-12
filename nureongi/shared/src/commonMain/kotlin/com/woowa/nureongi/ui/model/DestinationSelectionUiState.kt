@@ -36,8 +36,8 @@ data class DestinationItemUiModel(
 
 internal val PreviewDestinationSelectionUiState = DestinationSelectionUiState(
     currentLocation = CurrentLocationUiModel(
-        nodeId = "gate",
-        name = "개찰구",
+        nodeId = "a",
+        name = "옆 강의실",
     ),
-    destinations = PangyoStationUiData.destinations,
+    destinations = PreviewStationMapData.toDestinationItems(),
 )

@@ -19,6 +19,6 @@ data class CurrentLocationItemUiModel(
 )
 
 internal val PreviewCurrentLocationSelectionUiState = CurrentLocationSelectionUiState(
-    locations = PangyoStationUiData.currentLocations,
-    selectedLocationId = "gate",
+    locations = PreviewStationMapData.toCurrentLocationItems(),
+    selectedLocationId = "a",
 )
