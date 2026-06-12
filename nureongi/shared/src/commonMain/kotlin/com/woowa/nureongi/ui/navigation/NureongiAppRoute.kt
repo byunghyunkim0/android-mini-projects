@@ -17,6 +17,7 @@ import com.woowa.nureongi.ui.screen.CurrentLocationSelectionScreen
 import com.woowa.nureongi.ui.screen.DestinationSelectionScreen
 import com.woowa.nureongi.ui.screen.GuidanceScreen
 import com.woowa.nureongi.ui.theme.NureongiColors
+import com.woowa.nureongi.ui.voice.rememberVoiceGuide
 
 @Composable
 internal fun NureongiAppRoute(
@@ -75,13 +76,26 @@ internal fun NureongiAppRoute(
                         .background(NureongiColors.Background),
                 )
             } else {
+                val voiceGuide = rememberVoiceGuide()
+                val guideMessage = guidanceState.currentGuidance.guideMessage
+
+                LaunchedEffect(
+                    guidanceState.currentStepIndex,
+                    guidanceState.isArrived,
+                ) {
+                    voiceGuide.speak(guideMessage)
+                }
+
                 GuidanceScreen(
                     state = guidanceState,
                     onNextStepClick = viewModel::onNextGuidanceStep,
                     onCloseClick = {
+                        voiceGuide.stop()
                         navController.finishGuidance()
                     },
-                    onVoiceGuideClick = {},
+                    onVoiceGuideClick = {
+                        voiceGuide.speak(guideMessage)
+                    },
                 )
             }
         }
