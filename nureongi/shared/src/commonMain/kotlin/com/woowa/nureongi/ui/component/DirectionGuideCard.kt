@@ -19,7 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
@@ -48,7 +48,7 @@ fun DirectionGuideCard(
         Row(
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.semantics(mergeDescendants = true) {
+            modifier = Modifier.clearAndSetSemantics {
                 contentDescription = "$instruction. $landmark"
                 heading()
             },

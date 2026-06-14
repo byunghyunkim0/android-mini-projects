@@ -175,11 +175,7 @@ fun NextStepButton(
         onClick = onClick,
         containerColor = NureongiColors.Accent,
         contentColor = NureongiColors.OnAccent,
-        modifier = modifier
-            .height(72.dp)
-            .semantics {
-                contentDescription = "$text 버튼"
-            },
+        modifier = modifier.height(72.dp),
     )
 }
 
@@ -199,7 +195,7 @@ fun GuidanceBottomActions(
             modifier = Modifier
                 .size(72.dp)
                 .semantics {
-                    contentDescription = "현재 안내 음성으로 다시 듣기 버튼"
+                    contentDescription = "현재 안내 음성으로 다시 듣기"
                 },
         )
         NextStepButton(

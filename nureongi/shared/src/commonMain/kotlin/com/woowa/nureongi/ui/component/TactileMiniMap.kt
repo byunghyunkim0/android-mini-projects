@@ -102,7 +102,7 @@ fun TactileMiniMap(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .semantics { contentDescription = "${uiModel.title} 경로: $routeDescription" },
+                    .semantics { contentDescription = "경로: $routeDescription" },
             ) {
                 if (uiModel.rows < 2 || uiModel.columns < 2) return@Canvas
 
