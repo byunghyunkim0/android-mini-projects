@@ -17,6 +17,7 @@ import com.woowa.nureongi.ui.screen.CurrentLocationSelectionScreen
 import com.woowa.nureongi.ui.screen.DestinationSelectionScreen
 import com.woowa.nureongi.ui.screen.GuidanceScreen
 import com.woowa.nureongi.ui.theme.NureongiColors
+import com.woowa.nureongi.ui.accessibility.rememberScreenReaderEnabled
 import com.woowa.nureongi.ui.voice.rememberVoiceGuide
 
 @Composable
@@ -77,13 +78,16 @@ internal fun NureongiAppRoute(
                 )
             } else {
                 val voiceGuide = rememberVoiceGuide()
+                val isScreenReaderEnabled = rememberScreenReaderEnabled()
                 val guideMessage = guidanceState.currentGuidance.guideMessage
 
                 LaunchedEffect(
                     guidanceState.currentStepIndex,
                     guidanceState.isArrived,
                 ) {
-                    voiceGuide.speak(guideMessage)
+                    if (!isScreenReaderEnabled) {
+                        voiceGuide.speak(guideMessage)
+                    }
                 }
 
                 GuidanceScreen(
