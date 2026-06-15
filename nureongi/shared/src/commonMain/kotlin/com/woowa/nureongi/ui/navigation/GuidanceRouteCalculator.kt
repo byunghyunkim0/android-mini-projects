@@ -96,7 +96,7 @@ private fun Route.toGuidanceUiState(
             GuidanceStepUiModel(
                 instruction = "$movement ${formatDistance(step.edge.distance)} 이동",
                 landmark = targetName,
-                guideMessage = "$movement ${formatDistance(step.edge.distance)} 이동하면 ${targetName}에 도착합니다.", // fix: $targetName 점형 블록에 -> $targetName에 로 변경
+                guideMessage = "$movement ${formatDistance(step.edge.distance)} 이동하면 ${targetName}에 도착합니다.",
                 remainingDistanceText = formatDistance(step.remainingDistance),
                 remainingTactileBlockText = "${steps.size - index}개",
                 actionButtonText = if (isLastStep) {
