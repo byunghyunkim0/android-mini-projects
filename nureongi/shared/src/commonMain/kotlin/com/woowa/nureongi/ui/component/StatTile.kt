@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woowa.nureongi.ui.theme.NureongiColors
@@ -31,7 +31,7 @@ fun StatTile(
             .clip(RoundedCornerShape(16.dp))
             .background(NureongiColors.Surface)
             .padding(horizontal = 20.dp, vertical = 18.dp)
-            .semantics(mergeDescendants = true) {
+            .clearAndSetSemantics {
                 contentDescription = "$label $value"
             },
         verticalArrangement = Arrangement.spacedBy(4.dp),

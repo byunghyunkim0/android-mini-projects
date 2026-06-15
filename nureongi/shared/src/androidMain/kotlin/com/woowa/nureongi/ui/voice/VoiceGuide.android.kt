@@ -11,11 +11,11 @@ import java.util.Locale
 @Composable
 internal actual fun rememberVoiceGuide(): VoiceGuide {
     val context = LocalContext.current.applicationContext
-    val voiceGuide = remember(context) {
+    val voiceGuide = remember {
         AndroidVoiceGuide(context)
     }
 
-    DisposableEffect(voiceGuide) {
+    DisposableEffect(Unit) {
         onDispose(voiceGuide::release)
     }
 
