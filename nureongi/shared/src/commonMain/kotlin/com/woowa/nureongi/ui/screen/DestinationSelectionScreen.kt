@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -23,6 +24,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.woowa.nureongi.ui.accessibility.rememberScreenReaderEnabled
 import com.woowa.nureongi.ui.component.BrailleIcon
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.CurrentLocationBar
@@ -33,6 +35,7 @@ import com.woowa.nureongi.ui.model.PreviewDestinationSelectionUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
+import com.woowa.nureongi.ui.voice.rememberVoiceGuide
 
 @Composable
 fun DestinationSelectionScreen(
@@ -42,6 +45,16 @@ fun DestinationSelectionScreen(
     onStartGuidance: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val voiceGuide = rememberVoiceGuide()
+    val isScreenReaderEnabled = rememberScreenReaderEnabled()
+
+    LaunchedEffect(state.error) {
+        val errorMessage = state.error?.message
+        if (errorMessage != null && !isScreenReaderEnabled) {
+            voiceGuide.speak(errorMessage)
+        }
+    }
+
     DestinationSelectionContent(
         currentLocationName = state.currentLocationName,
         destinations = state.destinations,

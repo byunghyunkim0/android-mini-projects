@@ -14,7 +14,11 @@ data class DestinationSelectionUiState(
         get() = destinations.firstOrNull { it.id == selectedDestinationId }
 
     val startGuidanceDestinationId: String?
-        get() = if (!isLoading && currentLocation != null) selectedDestination?.id else null
+        get() = if (!isLoading && currentLocation != null && currentLocation.nodeId != selectedDestination?.id) {
+            selectedDestination?.id
+        } else {
+            null
+        }
 
     val canStartGuidance: Boolean
         get() = startGuidanceDestinationId != null
