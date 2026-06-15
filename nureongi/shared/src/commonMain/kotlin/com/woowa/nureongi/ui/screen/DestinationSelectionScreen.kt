@@ -2,19 +2,19 @@ package com.woowa.nureongi.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.woowa.nureongi.ui.accessibility.rememberScreenReaderEnabled
 import com.woowa.nureongi.ui.component.BrailleIcon
 import com.woowa.nureongi.ui.component.CtaButton
 import com.woowa.nureongi.ui.component.CurrentLocationBar
@@ -33,6 +34,7 @@ import com.woowa.nureongi.ui.model.PreviewDestinationSelectionUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
 import com.woowa.nureongi.ui.theme.NureongiTypography
+import com.woowa.nureongi.ui.voice.rememberVoiceGuide
 
 @Composable
 fun DestinationSelectionScreen(
@@ -42,6 +44,16 @@ fun DestinationSelectionScreen(
     onStartGuidance: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val voiceGuide = rememberVoiceGuide()
+    val isScreenReaderEnabled = rememberScreenReaderEnabled()
+
+    LaunchedEffect(state.error) {
+        val errorMessage = state.error?.message
+        if (errorMessage != null && !isScreenReaderEnabled) {
+            voiceGuide.speak(errorMessage)
+        }
+    }
+
     DestinationSelectionContent(
         currentLocationName = state.currentLocationName,
         destinations = state.destinations,
@@ -69,18 +81,38 @@ private fun DestinationSelectionContent(
     onStartGuidance: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                containerColor = NureongiColors.Background,
+            ) {
+                DestinationSelectionCtaButton(
+                    modifier = Modifier
+                        .height(72.dp),
+                    text = startGuidanceButtonText,
+                    enabled = canStartGuidance,
+                    onStartGuidance = onStartGuidance,
+                )
+            }
+        },
         modifier = modifier
             .fillMaxSize()
-            .background(NureongiColors.Background)
-            .safeContentPadding()
-            .padding(20.dp),
-    ) {
+            .background(NureongiColors.Background),
+    ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(vertical = 10.dp, horizontal = 15.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             DestinationSelectionHeader()
+            Text(
+                text = "현재 위치를 선택해주세요.",
+                style = NureongiTypography.SectionHeader,
+                color = NureongiColors.TextPrimary,
+                modifier = Modifier.semantics { heading() }
+            )
             CurrentLocationBar(
                 locationName = currentLocationName,
                 onChangeClick = onChangeLocationClick,
@@ -95,15 +127,6 @@ private fun DestinationSelectionContent(
                 onDestinationSelected = onDestinationSelected,
             )
         }
-
-        DestinationSelectionCtaButton(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .height(72.dp),
-            text = startGuidanceButtonText,
-            enabled = canStartGuidance,
-            onStartGuidance = onStartGuidance,
-        )
     }
 }
 
@@ -179,7 +202,6 @@ private fun DestinationOptions(
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 88.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(

@@ -227,6 +227,38 @@ class NureongiAppViewModelTest {
         assertEquals("직진하여 1.5m 이동", success.guidanceState.steps[0].instruction)
         assertEquals("오른쪽으로 회전한 뒤 5.5m 이동", success.guidanceState.steps[1].instruction)
     }
+
+    @Test
+    fun `목적지와 현재 위치를 동일하게 선택하는 즉시 화면에 오류를 노출한다`() {
+        val viewModel = NureongiAppViewModel()
+
+        viewModel.onLocationSelected("a")
+        viewModel.onDestinationSelected("a")
+
+        val state = viewModel.uiState.value
+        assertEquals(
+            "현재 위치와 목적지가 같습니다. 다른 목적지를 선택해 주세요.",
+            state.destinationState.error?.message,
+        )
+        assertEquals(false, state.destinationState.canStartGuidance)
+    }
+
+    @Test
+    fun `목적지와 현재 위치가 같은 상태에서 서로 다른 목적지로 바꾸면 오류가 즉시 해제된다`() {
+        val viewModel = NureongiAppViewModel()
+
+        viewModel.onLocationSelected("a")
+        viewModel.onDestinationSelected("a")
+        assertEquals(
+            "현재 위치와 목적지가 같습니다. 다른 목적지를 선택해 주세요.",
+            viewModel.uiState.value.destinationState.error?.message,
+        )
+
+        // 다른 목적지 선택
+        viewModel.onDestinationSelected("e")
+        assertNull(viewModel.uiState.value.destinationState.error)
+        assertEquals(true, viewModel.uiState.value.destinationState.canStartGuidance)
+    }
 }
 
 private class RecordingRouteCalculator(

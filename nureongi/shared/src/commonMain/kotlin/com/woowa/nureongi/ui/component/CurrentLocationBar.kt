@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,11 @@ fun CurrentLocationBar(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
+            .clickable(
+                onClickLabel = "현재 위치 변경",
+                role = Role.Button,
+                onClick = onChangeClick,
+            )
             .background(NureongiColors.Surface)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,18 +73,13 @@ fun CurrentLocationBar(
             modifier = Modifier
                 .widthIn(min = 48.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .clickable(
-                    onClickLabel = "현재 위치 변경",
-                    role = Role.Button,
-                    onClick = onChangeClick,
-                )
                 .clearAndSetSemantics { contentDescription = "현재 위치 변경" }
                 .sizeIn(minWidth = 48.dp, minHeight = 48.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "변경 ›",
-                style = NureongiTypography.ItemDescription,
+                style = NureongiTypography.SectionHeader,
                 color = NureongiColors.Accent,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             )
@@ -90,13 +91,16 @@ fun CurrentLocationBar(
 @Composable
 private fun CurrentLocationBarPreview() {
     NureongiTheme {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(NureongiColors.Background)
                 .padding(20.dp),
         ) {
             CurrentLocationBar(locationName = "개찰구", onChangeClick = {})
+            CurrentLocationBar(locationName = "아주아주긴출발지이름입니다", onChangeClick = {})
+            CurrentLocationBar(locationName = "너무 너무 길어서 어떻게 해야할지 모르겠는 출발지 이름인데 이걸 정말 어떻게 해야할지 감이 안오네요.", onChangeClick = {})
+
         }
     }
 }

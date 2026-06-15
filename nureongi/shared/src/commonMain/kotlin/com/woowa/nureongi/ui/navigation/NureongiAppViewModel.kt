@@ -34,19 +34,18 @@ internal class NureongiAppViewModel(
             nodeId = selectedLocation.id,
             name = selectedLocation.place.name,
         )
-        _uiState.value = state.copy(
+        val updatedState = state.copy(
             currentLocationState = state.currentLocationState.copy(
                 selectedLocationId = locationId,
                 error = null,
             ),
             destinationState = state.destinationState.copy(
                 currentLocation = currentLocation,
-                selectedDestinationId = state.destinationState.selectedDestinationId
-                    ?.takeUnless { destinationId -> destinationId == locationId },
-                error = null,
+                selectedDestinationId = state.destinationState.selectedDestinationId,
             ),
             guidanceState = null,
         )
+        _uiState.value = validateSelection(updatedState)
         return currentLocation
     }
 
@@ -58,14 +57,27 @@ internal class NureongiAppViewModel(
             ) {
                 state
             } else {
-                state.copy(
+                val updatedState = state.copy(
                     destinationState = state.destinationState.copy(
                         selectedDestinationId = destinationId,
-                        error = null,
                     ),
                 )
+                validateSelection(updatedState)
             }
         }
+    }
+
+    private fun validateSelection(state: NureongiAppUiState): NureongiAppUiState {
+        val currentLocation = state.destinationState.currentLocation
+        val selectedDestination = state.destinationState.selectedDestination
+        val error = if (currentLocation != null && selectedDestination != null && currentLocation.nodeId == selectedDestination.id) {
+            UiError("현재 위치와 목적지가 같습니다. 다른 목적지를 선택해 주세요.")
+        } else {
+            null
+        }
+        return state.copy(
+            destinationState = state.destinationState.copy(error = error)
+        )
     }
 
     fun onStartGuidance(): GuidanceNavRoute? {
