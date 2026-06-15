@@ -81,6 +81,12 @@ private fun DestinationSelectionContent(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             DestinationSelectionHeader()
+            Text(
+                text = "현재 위치를 선택해주세요.",
+                style = NureongiTypography.SectionHeader,
+                color = NureongiColors.TextPrimary,
+                modifier = Modifier.semantics { heading() }
+            )
             CurrentLocationBar(
                 locationName = currentLocationName,
                 onChangeClick = onChangeLocationClick,
