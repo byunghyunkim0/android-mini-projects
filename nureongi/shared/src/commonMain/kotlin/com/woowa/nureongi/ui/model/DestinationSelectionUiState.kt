@@ -24,8 +24,10 @@ data class DestinationSelectionUiState(
         get() = startGuidanceDestinationId != null
 
     val startGuidanceButtonText: String
-        get() = selectedDestination?.let { "${it.place.name}까지 안내 시작" }
-            ?: "목적지를 선택하세요"
+        get() = selectedDestination?.let {
+            if(currentLocation == null) "현재 위치를 선택하세요"
+            else "${currentLocation.name}에서 ${it.place.name}까지 안내 시작"
+        } ?: "목적지를 선택하세요"
 }
 
 data class CurrentLocationUiModel(
