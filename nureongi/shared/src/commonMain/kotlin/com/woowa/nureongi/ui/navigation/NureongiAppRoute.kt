@@ -98,7 +98,10 @@ internal fun NureongiAppRoute(
 
                 GuidanceScreen(
                     state = guidanceState,
-                    onNextStepClick = viewModel::onNextGuidanceStep,
+                    onNextStepClick = {
+                        voiceGuide.stop()
+                        viewModel.onNextGuidanceStep()
+                    },
                     onCloseClick = {
                         voiceGuide.stop()
                         navController.finishGuidance()
