@@ -34,6 +34,7 @@ import com.woowa.nureongi.ui.model.GuidanceUiState
 import com.woowa.nureongi.ui.model.PreviewGuidanceUiState
 import com.woowa.nureongi.ui.theme.NureongiColors
 import com.woowa.nureongi.ui.theme.NureongiTheme
+import com.woowa.nureongi.ui.voice.stopVoiceGuideOnInteraction
 
 @Composable
 fun GuidanceScreen(
@@ -41,6 +42,7 @@ fun GuidanceScreen(
     onNextStepClick: () -> Unit,
     onCloseClick: () -> Unit,
     onVoiceGuideClick: () -> Unit,
+    onUserInteraction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -58,6 +60,7 @@ fun GuidanceScreen(
         modifier = modifier
             .fillMaxSize()
             .background(NureongiColors.Background)
+            .stopVoiceGuideOnInteraction(onUserInteraction)
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -221,6 +224,7 @@ private fun GuidanceScreenPreview() {
             onNextStepClick = {},
             onCloseClick = {},
             onVoiceGuideClick = {},
+            onUserInteraction = {},
         )
     }
 }
@@ -237,6 +241,7 @@ private fun ArrivedGuidanceScreenPreview() {
             onNextStepClick = {},
             onCloseClick = {},
             onVoiceGuideClick = {},
+            onUserInteraction = {},
         )
     }
 }
