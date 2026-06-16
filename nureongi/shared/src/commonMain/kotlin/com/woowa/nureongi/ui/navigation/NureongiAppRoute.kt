@@ -109,6 +109,7 @@ internal fun NureongiAppRoute(
                     onVoiceGuideClick = {
                         voiceGuide.speak(guideMessage)
                     },
+                    onUserInteraction = voiceGuide::stop,
                 )
             }
         }
