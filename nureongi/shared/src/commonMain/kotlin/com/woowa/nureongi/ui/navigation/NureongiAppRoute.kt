@@ -52,6 +52,15 @@ internal fun NureongiAppRoute(
                         )
                     }
                 },
+                onVoiceLocationSelectionStarted = viewModel::onVoiceLocationSelectionStarted,
+                onVoiceLocationRecognized = { recognizedTexts ->
+                    viewModel.onVoiceLocationRecognized(recognizedTexts)?.let {
+                        navController.popBackStack<DestinationSelectionNavRoute>(
+                            inclusive = false,
+                        )
+                    }
+                },
+                onVoiceLocationRecognitionFailed = viewModel::onVoiceLocationRecognitionFailed,
             )
         }
         composable<DestinationSelectionNavRoute> {

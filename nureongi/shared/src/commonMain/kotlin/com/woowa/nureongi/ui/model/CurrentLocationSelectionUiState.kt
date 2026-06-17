@@ -4,6 +4,8 @@ data class CurrentLocationSelectionUiState(
     val locations: List<CurrentLocationItemUiModel> = emptyList(),
     val selectedLocationId: String? = null,
     val isLoading: Boolean = false,
+    val isVoiceListening: Boolean = false,
+    val voiceSelectionMessage: String? = null,
     val error: UiError? = null,
 ) {
     val selectedLocation: CurrentLocationItemUiModel?
