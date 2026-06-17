@@ -6,6 +6,7 @@ import com.woowa.nureongi.domain.data.WoowaEleventhFloorMapData
 import com.woowa.nureongi.ui.model.CurrentLocationUiModel
 import com.woowa.nureongi.ui.model.GuidanceUiState
 import com.woowa.nureongi.ui.model.UiError
+import com.woowa.nureongi.ui.speech.findBestVoiceLocationMatch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +22,58 @@ internal class NureongiAppViewModel(
         initialState ?: mapData.toInitialAppUiState(),
     )
     val uiState = _uiState.asStateFlow()
+
+    fun onVoiceLocationSelectionStarted() {
+        _uiState.update { state ->
+            if (state.currentLocationState.isLoading || state.currentLocationState.locations.isEmpty()) {
+                state
+            } else {
+                state.copy(
+                    currentLocationState = state.currentLocationState.copy(
+                        isVoiceListening = true,
+                        voiceSelectionMessage = "출발지를 말씀해주세요.",
+                    ),
+                )
+            }
+        }
+    }
+
+    fun onVoiceLocationRecognized(recognizedTexts: List<String>): CurrentLocationUiModel? {
+        val state = _uiState.value
+        val match = findBestVoiceLocationMatch(
+            recognizedTexts = recognizedTexts,
+            locations = state.currentLocationState.locations,
+        )
+
+        if (match == null) {
+            _uiState.value = state.copy(
+                currentLocationState = state.currentLocationState.copy(
+                    isVoiceListening = false,
+                    voiceSelectionMessage = "출발지를 찾지 못했습니다. 다시 말씀해주세요.",
+                ),
+            )
+            return null
+        }
+
+        _uiState.value = state.copy(
+            currentLocationState = state.currentLocationState.copy(
+                isVoiceListening = false,
+                voiceSelectionMessage = "${match.locationName}을 현재 위치로 설정합니다.",
+            ),
+        )
+        return onLocationSelected(match.locationId)
+    }
+
+    fun onVoiceLocationRecognitionFailed(message: String) {
+        _uiState.update { state ->
+            state.copy(
+                currentLocationState = state.currentLocationState.copy(
+                    isVoiceListening = false,
+                    voiceSelectionMessage = message,
+                ),
+            )
+        }
+    }
 
     fun onLocationSelected(locationId: String): CurrentLocationUiModel? {
         val state = _uiState.value

@@ -259,6 +259,59 @@ class NureongiAppViewModelTest {
         assertNull(viewModel.uiState.value.destinationState.error)
         assertEquals(true, viewModel.uiState.value.destinationState.canStartGuidance)
     }
+
+    @Test
+    fun `voice location selection state is managed by viewmodel`() {
+        val viewModel = NureongiAppViewModel()
+        val firstLocation = viewModel.uiState.value.currentLocationState.locations.first()
+
+        viewModel.onVoiceLocationSelectionStarted()
+
+        assertEquals(true, viewModel.uiState.value.currentLocationState.isVoiceListening)
+        assertEquals(
+            "출발지를 말씀해주세요.",
+            viewModel.uiState.value.currentLocationState.voiceSelectionMessage,
+        )
+
+        val selectedLocation = viewModel.onVoiceLocationRecognized(listOf(firstLocation.place.name))
+
+        val state = viewModel.uiState.value
+        assertEquals(firstLocation.id, selectedLocation?.nodeId)
+        assertEquals(firstLocation.id, state.currentLocationState.selectedLocationId)
+        assertEquals(false, state.currentLocationState.isVoiceListening)
+        assertEquals(
+            "${firstLocation.place.name}을 현재 위치로 설정합니다.",
+            state.currentLocationState.voiceSelectionMessage,
+        )
+    }
+
+    @Test
+    fun `voice location selection failure updates viewmodel state`() {
+        val viewModel = NureongiAppViewModel()
+
+        viewModel.onVoiceLocationSelectionStarted()
+        val selectedLocation = viewModel.onVoiceLocationRecognized(listOf("unknown voice input"))
+
+        val state = viewModel.uiState.value.currentLocationState
+        assertNull(selectedLocation)
+        assertEquals(false, state.isVoiceListening)
+        assertEquals(
+            "출발지를 찾지 못했습니다. 다시 말씀해주세요.",
+            state.voiceSelectionMessage,
+        )
+    }
+
+    @Test
+    fun `voice location recognition error updates viewmodel state`() {
+        val viewModel = NureongiAppViewModel()
+
+        viewModel.onVoiceLocationSelectionStarted()
+        viewModel.onVoiceLocationRecognitionFailed("microphone permission required")
+
+        val state = viewModel.uiState.value.currentLocationState
+        assertEquals(false, state.isVoiceListening)
+        assertEquals("microphone permission required", state.voiceSelectionMessage)
+    }
 }
 
 private class RecordingRouteCalculator(
