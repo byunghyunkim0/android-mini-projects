@@ -1,7 +1,7 @@
 package com.woowa.nureongi.ui.navigation
 
 import com.woowa.nureongi.domain.data.StationMapDataSource
-import com.woowa.nureongi.domain.data.WoowaEleventhFloorMapData
+import com.woowa.nureongi.domain.data.SeohyeonBasementStationMapData
 import com.woowa.nureongi.ui.model.CurrentLocationUiModel
 import com.woowa.nureongi.ui.model.DestinationItemUiModel
 import com.woowa.nureongi.ui.model.DestinationSelectionUiState
@@ -22,7 +22,7 @@ class NureongiAppViewModelTest {
         var loadCount = 0
         val mapDataSource = StationMapDataSource {
             loadCount += 1
-            WoowaEleventhFloorMapData.getMapData()
+            SeohyeonBasementStationMapData.getMapData()
         }
         val viewModel = NureongiAppViewModel(mapDataSource = mapDataSource)
 
@@ -31,13 +31,13 @@ class NureongiAppViewModelTest {
             state.currentLocationState.locations.map { it.id },
             state.destinationState.destinations.map { it.id },
         )
-        viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("e")
+        viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("platform-suwon-2-2")
         viewModel.onStartGuidance()
 
         assertEquals(1, loadCount)
         assertEquals(
-            "B 점형 블록",
+            SeohyeonBasementStationMapData.getMapData().station.findNode("n1")!!.name,
             viewModel.uiState.value.guidanceState?.miniMap?.path?.get(1)?.label,
         )
     }
@@ -58,13 +58,13 @@ class NureongiAppViewModelTest {
     fun `현재 위치를 선택하면 목적지 화면에서 사용할 위치 상태를 갱신한다`() {
         val viewModel = NureongiAppViewModel()
 
-        val currentLocation = viewModel.onLocationSelected("a")
+        val currentLocation = viewModel.onLocationSelected("exit-3")
 
         val state = viewModel.uiState.value
-        val expectedName = WoowaEleventhFloorMapData.getMapData().station.findNode("a")!!.name
-        assertEquals("a", currentLocation?.nodeId)
-        assertEquals("a", state.currentLocationState.selectedLocationId)
-        assertEquals("a", state.destinationState.currentLocation?.nodeId)
+        val expectedName = SeohyeonBasementStationMapData.getMapData().station.findNode("exit-3")!!.name
+        assertEquals("exit-3", currentLocation?.nodeId)
+        assertEquals("exit-3", state.currentLocationState.selectedLocationId)
+        assertEquals("exit-3", state.destinationState.currentLocation?.nodeId)
         assertEquals(expectedName, state.destinationState.currentLocationName)
     }
 
@@ -89,21 +89,21 @@ class NureongiAppViewModelTest {
         )
         val viewModel = NureongiAppViewModel(routeCalculator = calculator)
 
-        viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("e")
+        viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("platform-suwon-2-2")
         val request = viewModel.onStartGuidance()
 
         val state = viewModel.uiState.value
         assertEquals(
             GuidanceNavRoute(
-                currentLocationId = "a",
-                destinationId = "e",
+                currentLocationId = "exit-3",
+                destinationId = "platform-suwon-2-2",
             ),
             request,
         )
         assertEquals(expectedGuidance, state.guidanceState)
-        assertEquals("a", calculator.currentLocation?.nodeId)
-        assertEquals("e", calculator.destination?.id)
+        assertEquals("exit-3", calculator.currentLocation?.nodeId)
+        assertEquals("platform-suwon-2-2", calculator.destination?.id)
         assertNull(state.destinationState.error)
     }
 
@@ -114,8 +114,8 @@ class NureongiAppViewModelTest {
         )
         val viewModel = NureongiAppViewModel(routeCalculator = calculator)
 
-        viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("e")
+        viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("platform-suwon-2-2")
         val request = viewModel.onStartGuidance()
 
         val state = viewModel.uiState.value
@@ -134,8 +134,8 @@ class NureongiAppViewModelTest {
         )
         val viewModel = NureongiAppViewModel(initialState = initialState)
 
-        val currentLocation = viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("e")
+        val currentLocation = viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("platform-suwon-2-2")
         val request = viewModel.onStartGuidance()
 
         val state = viewModel.uiState.value
@@ -155,8 +155,8 @@ class NureongiAppViewModelTest {
         )
 
         viewModel.onGuidanceDestinationEntered(
-            currentLocationId = "a",
-            destinationId = "e",
+            currentLocationId = "exit-3",
+            destinationId = "platform-suwon-2-2",
         )
 
         assertNotNull(viewModel.uiState.value.guidanceState)
@@ -175,8 +175,8 @@ class NureongiAppViewModelTest {
                 result = GuidanceRouteCalculationResult.Success(initialGuidance),
             ),
         )
-        viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("e")
+        viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("platform-suwon-2-2")
         viewModel.onStartGuidance()
 
         viewModel.onNextGuidanceStep()
@@ -191,9 +191,9 @@ class NureongiAppViewModelTest {
         val calculator = MapGuidanceRouteCalculator()
 
         val result = calculator.calculate(
-            currentLocation = CurrentLocationUiModel("a", "옆 강의실"),
+            currentLocation = CurrentLocationUiModel("exit-3", "옆 강의실"),
             destination = DestinationItemUiModel(
-                id = "a",
+                id = "exit-3",
                 place = PlaceUiModel("옆 강의실", ""),
             ),
         )
@@ -210,30 +210,30 @@ class NureongiAppViewModelTest {
         val calculator = MapGuidanceRouteCalculator()
 
         val result = calculator.calculate(
-            currentLocation = CurrentLocationUiModel("a", "옆 강의실"),
+            currentLocation = CurrentLocationUiModel("exit-3", "start"),
             destination = DestinationItemUiModel(
-                id = "e",
-                place = PlaceUiModel("우물가", ""),
+                id = "platform-suwon-2-2",
+                place = PlaceUiModel("destination", ""),
             ),
         )
 
         val success = assertIs<GuidanceRouteCalculationResult.Success>(result)
-        val station = WoowaEleventhFloorMapData.getMapData().station
-        assertEquals(station.findNode("e")!!.name, success.guidanceState.destinationName)
-        assertEquals("옆 강의실", success.guidanceState.miniMap.path.first().label)
-        assertEquals("B 점형 블록", success.guidanceState.miniMap.path[1].label)
-        assertEquals("우물가", success.guidanceState.miniMap.path.last().label)
-        assertEquals(3, success.guidanceState.steps.size)
-        assertEquals("직진하여 1.5m 이동", success.guidanceState.steps[0].instruction)
-        assertEquals("오른쪽으로 회전한 뒤 5.5m 이동", success.guidanceState.steps[1].instruction)
+        val station = SeohyeonBasementStationMapData.getMapData().station
+        assertEquals(station.findNode("platform-suwon-2-2")!!.name, success.guidanceState.destinationName)
+        assertEquals(station.findNode("exit-3")!!.name, success.guidanceState.miniMap.path.first().label)
+        assertEquals(station.findNode("n1")!!.name, success.guidanceState.miniMap.path[1].label)
+        assertEquals(station.findNode("platform-suwon-2-2")!!.name, success.guidanceState.miniMap.path.last().label)
+        assertEquals(11, success.guidanceState.steps.size)
+        assertEquals(true, success.guidanceState.steps[0].instruction.contains("12m"))
+        assertEquals(true, success.guidanceState.steps[1].instruction.contains("44m"))
     }
 
     @Test
     fun `목적지와 현재 위치를 동일하게 선택하는 즉시 화면에 오류를 노출한다`() {
         val viewModel = NureongiAppViewModel()
 
-        viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("a")
+        viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("exit-3")
 
         val state = viewModel.uiState.value
         assertEquals(
@@ -247,15 +247,15 @@ class NureongiAppViewModelTest {
     fun `목적지와 현재 위치가 같은 상태에서 서로 다른 목적지로 바꾸면 오류가 즉시 해제된다`() {
         val viewModel = NureongiAppViewModel()
 
-        viewModel.onLocationSelected("a")
-        viewModel.onDestinationSelected("a")
+        viewModel.onLocationSelected("exit-3")
+        viewModel.onDestinationSelected("exit-3")
         assertEquals(
             "현재 위치와 목적지가 같습니다. 다른 목적지를 선택해 주세요.",
             viewModel.uiState.value.destinationState.error?.message,
         )
 
         // 다른 목적지 선택
-        viewModel.onDestinationSelected("e")
+        viewModel.onDestinationSelected("platform-suwon-2-2")
         assertNull(viewModel.uiState.value.destinationState.error)
         assertEquals(true, viewModel.uiState.value.destinationState.canStartGuidance)
     }

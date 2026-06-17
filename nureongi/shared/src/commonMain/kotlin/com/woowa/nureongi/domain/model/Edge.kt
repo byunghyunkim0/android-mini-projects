@@ -26,4 +26,5 @@ enum class EdgeCategory {
     STAIRS,
     ESCALATOR,
     ELEVATOR,
+    FARE_GATE,
 }
