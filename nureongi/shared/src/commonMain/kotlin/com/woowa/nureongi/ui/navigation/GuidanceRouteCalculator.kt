@@ -13,6 +13,8 @@ import com.woowa.nureongi.ui.model.GuidanceUiState
 import com.woowa.nureongi.ui.model.MiniMapUiModel
 import com.woowa.nureongi.ui.model.RouteNodeUiModel
 
+private const val TACTILE_BLOCK_GUIDE_NAME = "점형 블록"
+
 internal fun interface GuidanceRouteCalculator {
     fun calculate(
         currentLocation: CurrentLocationUiModel,
@@ -90,8 +92,12 @@ private fun Route.toGuidanceUiState(
                 steps[index - 1].edge.angle
             }
             val movement = movementInstruction(previousAngle, step.edge.angle)
-            val targetName = step.toNode.name
             val isLastStep = index == steps.lastIndex
+            val targetName = if (isLastStep) {
+                destinationName
+            } else {
+                TACTILE_BLOCK_GUIDE_NAME
+            }
 
             GuidanceStepUiModel(
                 instruction = "$movement ${formatDistance(step.edge.distance)} 이동",
@@ -118,12 +124,12 @@ private fun Route.toGuidanceUiState(
             title = "${mapData.station.name} · 점자 블록 지도",
             rows = mapData.rows,
             columns = mapData.columns,
-            path = pathNodes.map { node ->
+            path = pathNodes.mapIndexed { index, node ->
                 val position = requireNotNull(mapData.nodePositions[node.id])
                 RouteNodeUiModel(
                     row = position.row,
                     column = position.column,
-                    label = node.name,
+                    label = destinationName.takeIf { index == pathNodes.lastIndex },
                 )
             },
         ),

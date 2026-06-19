@@ -36,10 +36,7 @@ class NureongiAppViewModelTest {
         viewModel.onStartGuidance()
 
         assertEquals(1, loadCount)
-        assertEquals(
-            SeohyeonBasementStationMapData.getMapData().station.findNode("n1")!!.name,
-            viewModel.uiState.value.guidanceState?.miniMap?.path?.get(1)?.label,
-        )
+        assertNull(viewModel.uiState.value.guidanceState?.miniMap?.path?.get(1)?.label)
     }
 
     @Test
@@ -220,10 +217,13 @@ class NureongiAppViewModelTest {
         val success = assertIs<GuidanceRouteCalculationResult.Success>(result)
         val station = SeohyeonBasementStationMapData.getMapData().station
         assertEquals(station.findNode("platform-suwon-2-2")!!.name, success.guidanceState.destinationName)
-        assertEquals(station.findNode("exit-3")!!.name, success.guidanceState.miniMap.path.first().label)
-        assertEquals(station.findNode("n1")!!.name, success.guidanceState.miniMap.path[1].label)
+        assertNull(success.guidanceState.miniMap.path.first().label)
+        assertNull(success.guidanceState.miniMap.path[1].label)
         assertEquals(station.findNode("platform-suwon-2-2")!!.name, success.guidanceState.miniMap.path.last().label)
         assertEquals(11, success.guidanceState.steps.size)
+        assertEquals("점형 블록", success.guidanceState.steps.first().landmark)
+        assertEquals(station.findNode("platform-suwon-2-2")!!.name, success.guidanceState.steps.last().landmark)
+        assertEquals(false, success.guidanceState.steps.first().guideMessage.contains(station.findNode("n1")!!.name))
         assertEquals(true, success.guidanceState.steps[0].instruction.contains("12m"))
         assertEquals(true, success.guidanceState.steps[1].instruction.contains("44m"))
     }

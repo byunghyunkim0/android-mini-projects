@@ -59,7 +59,7 @@ fun TactileMiniMap(
         fontSize = NureongiTypography.ItemDescription.fontSize,
         color = NureongiColors.Accent,
     )
-    val routeDescription = uiModel.path.joinToString(separator = " → ") { it.label ?: "경유 지점" }
+    val routeDescription = uiModel.path.joinToString(separator = " → ") { it.label ?: "점형 블록" }
 
     val infiniteTransition = rememberInfiniteTransition(label = "RadarState")
     

@@ -67,15 +67,15 @@ internal val PreviewGuidanceUiState = GuidanceUiState(
     steps = listOf(
         GuidanceStepUiModel(
             instruction = "8m 직진",
-            landmark = "다음 점형 블록 · 출구 갈림길",
-            guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. 8미터 앞에 갈림길이 있습니다.",
+            landmark = "점형 블록",
+            guideMessage = "2번 출구까지 안내를 시작합니다. 앞으로 8미터 직진하세요. 8미터 앞에 점형 블록이 있습니다.",
             remainingDistanceText = "20m",
             remainingTactileBlockText = "2개",
             actionButtonText = "다음 점형 블록 도착 ›",
         ),
         GuidanceStepUiModel(
             instruction = "오른쪽 회전",
-            landmark = "출구 방향 점형 블록",
+            landmark = "점형 블록",
             guideMessage = "점형 블록에서 오른쪽으로 회전하세요.",
             remainingDistanceText = "12m",
             remainingTactileBlockText = "1개",
@@ -103,8 +103,8 @@ internal val PreviewGuidanceUiState = GuidanceUiState(
         rows = 5,
         columns = 3,
         path = listOf(
-            RouteNodeUiModel(row = 2, column = 1, label = "개찰구", state = RouteNodeUiModel.State.HIGHLIGHTED), // 출발지이자 현재 위치
-            RouteNodeUiModel(row = 1, column = 1, label = "갈림길", state = RouteNodeUiModel.State.NEUTRAL),
+            RouteNodeUiModel(row = 2, column = 1, state = RouteNodeUiModel.State.HIGHLIGHTED), // 출발지이자 현재 위치
+            RouteNodeUiModel(row = 1, column = 1, state = RouteNodeUiModel.State.NEUTRAL),
             RouteNodeUiModel(row = 1, column = 2, label = "2번 출구", state = RouteNodeUiModel.State.NEUTRAL), // 목적지 (마지막 노드)
         )
     )
